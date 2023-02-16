@@ -13,8 +13,10 @@ class Scene implements IDestroyable {
     public function create() {}
 
     public function update(elapsed:Float) {
-        for(member in members)
+        for(member in members) {
+            if(!member.alive) continue;
             member.update(elapsed);
+        }
     }
 
     public function draw() {

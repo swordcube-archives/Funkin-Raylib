@@ -25,45 +25,50 @@ class Audio extends Object {
         return pitch = v;
     }
 
+    /**
+     * Whether or not this sound is playing.
+     */
+    public var playing:Bool = true;
+
+    /**
+     * Whether or not this sound is looping.
+     */
+    public var loop:Bool = false;
+
+    private var __path:String;
+
     public function new(path:String, ?volume:Float = 1) {
         super();
+        this.__path = path;
         __sound = Rl.loadSound(path);
         this.volume = volume;
         this.pitch = 1;
         Rl.playSound(__sound);
     }
 
-    public function stop() {
-        Rl.stopSound(__sound);
-        return this;
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+        if(!Rl.isSoundPlaying(__sound) && loop)
+            Rl.playSound(__sound);
     }
 
-    override function kill() {
-        super.kill();
-        Rl.pauseSound(__sound);
-    }
-
-    override function revive() {
-        super.revive();
-        Rl.resumeSound(__sound);
-    }
+    public function stop() {return pause();}
+    public function play() {return resume();}
 
     public function pause() {
+        playing = false;
         Rl.pauseSound(__sound);
-        return this;
-    }
-
-    public function play() {
-        Rl.resumeSound(__sound);
         return this;
     }
 
     public function resume() {
+        playing = true;
         Rl.resumeSound(__sound);
         return this;
     }
 
     override function destroy() {
+        playing = false;
         Rl.unloadSound(__sound);
         super.destroy();
     }

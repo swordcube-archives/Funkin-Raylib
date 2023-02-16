@@ -13,6 +13,11 @@ class TitleScreen extends Scene {
     override function create() {
         super.create();
 
+        if(Game.sound.music == null || !Game.sound.music.playing)
+            Game.sound.playMusic(Paths.music("freakyMenu"), 1, true);
+
+        Game.sound.music.pitch = 15;
+
         add(logo = new Sprite(-150, -100).loadGraphic(Paths.image("menus/title/logoBumpin")));
     }
 

@@ -4,7 +4,6 @@ import engine.ui.VolumeTray;
 import engine.utilities.TimerManager;
 import engine.utilities.SignalManager;
 import engine.sound.SoundManager;
-import engine.memory.Memory;
 import engine.keyboard.KeyboardManager;
 import engine.Scene;
 import Rl.Colors;
@@ -74,8 +73,12 @@ class Game {
 			}
 
 			// Rendering volume tray
-			volumeTray.update(elapsedTime);
-			volumeTray.draw();
+			for(object in [volumeTray]) {
+				if(!object.alive) continue;
+				
+				object.update(elapsedTime);
+				object.draw();
+			}
 
 			// Rendering FPS counter
 			Rl.drawTextEx(fpsFont, Rl.getFPS()+" FPS", Rl.Vector2.create(10, 3), 16, 0, Rl.Colors.WHITE);
@@ -83,6 +86,7 @@ class Game {
 			Rl.endDrawing();
 		}
 
+		Rl.closeAudioDevice();
 		Rl.closeWindow();
 	}
 }
