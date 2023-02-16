@@ -1,5 +1,6 @@
 package engine;
 
+import engine.utilities.FrameData;
 import engine.utilities.Animation;
 import engine.Vector2;
 
@@ -9,6 +10,7 @@ import Rl.Color;
 import Rl.Texture2D;
 
 class Sprite extends Object {
+    public var frames:Map<String, Array<FrameData>> = [];
     public var animation:Animation = new Animation();
     public var texture:Texture2D;
 
