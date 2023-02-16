@@ -1,6 +1,9 @@
 package engine;
 
-class Scene {
+import engine.interfaces.IDestroyable;
+
+#if !macro
+class Scene implements IDestroyable {
     public var members:Array<Object> = [];
 
     public function new() {
@@ -34,3 +37,4 @@ class Scene {
             member.destroy();
     }
 }
+#end

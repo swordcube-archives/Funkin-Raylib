@@ -3,7 +3,7 @@ class Main {
 
 	static function main() {
 		game = new Game("Friday Night Funkin'", 1280, 720, 240);
-		game.switchScene(new scenes.TitleScreen());
+		Game.switchScene(new scenes.TitleScreen());
 		game.start();
 	}
 }

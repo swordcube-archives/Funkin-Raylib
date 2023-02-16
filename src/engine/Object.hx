@@ -1,8 +1,10 @@
 package engine;
 
+import engine.interfaces.IDestroyable;
 import engine.Vector2;
 
-class Object {
+#if !macro
+class Object implements IDestroyable {
     public var position:Vector2 = new Vector2(0, 0);
 
     public function new(?x:Float = 0, ?y:Float = 0) {
@@ -21,3 +23,4 @@ class Object {
         position = null;
     }
 }
+#end
