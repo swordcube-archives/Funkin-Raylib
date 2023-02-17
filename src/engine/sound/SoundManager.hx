@@ -19,6 +19,7 @@ class SoundManager {
     public var list:Array<Audio> = [];
     
     public function new() {
+        volume = 0.3;
         Game.signals.preSceneCreate.add(() -> {
             trace("[ENGINE] Clearing sounds...");
             for(sound in list) {

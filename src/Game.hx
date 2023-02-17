@@ -38,16 +38,16 @@ class Game {
 		Game.width = width;
 		Game.height = height;
 
-		Game.signals = new SignalManager();
-		Game.keys = new KeyboardManager();
-		Game.sound = new SoundManager();
-		Game.timers = new TimerManager();
-
 		Rl.initWindow(width, height, title);
 		Rl.setWindowState(4);
         Rl.setTargetFPS(fps);
 		Rl.initAudioDevice();
 		Rl.setWindowIcon(Rl.loadImage(Paths.image("gameIcon")));
+
+		Game.signals = new SignalManager();
+		Game.keys = new KeyboardManager();
+		Game.sound = new SoundManager();
+		Game.timers = new TimerManager();
 	}
 
 	public function start() {
