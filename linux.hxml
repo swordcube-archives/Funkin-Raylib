@@ -1,0 +1,8 @@
+-cp src
+-D analyzer-optimize
+-main Main
+--library raylib-hx
+--cmd cp -r assets bin/cpp/assets
+--cpp bin/cpp
+--cmd cd bin/cpp
+--cmd Main.exe
