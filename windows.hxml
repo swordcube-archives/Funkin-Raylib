@@ -2,6 +2,7 @@
 -D analyzer-optimize
 -main Main
 --library raylib-hx
+--cmd rd /s /q bin\cpp\assets\
 --cmd Xcopy assets\ bin\cpp\assets\ /E /H /C /I
 --cpp bin/cpp
 --cmd cd bin/cpp
