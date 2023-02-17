@@ -1,8 +1,8 @@
 package scenes;
 
+import engine.utilities.Atlas;
 import haxe.xml.Access;
 import sys.io.File;
-import engine.utilities.FrameData;
 import Rl.Texture2D;
 import Rl.Colors;
 import engine.utilities.Timer;
@@ -30,7 +30,8 @@ class TitleScreen extends Scene {
 		if (Game.sound.music == null || !Game.sound.music.playing)
 			Game.sound.playMusic(Paths.music("freakyMenu"), 1, true);
 
-		// add(logo = new Sprite(-150, -100).loadGraphic(Paths.image("menus/title/logoBumpin")));
+		logo = new Sprite(-150, -100);
+        logo.frames = Paths.getSparrowAtlas("menus/title/logoBumpin");
 
 		var xmlData = new Access(Xml.parse(File.getContent(Paths.asset("images/menus/title/logoBumpin.xml")).trim()).firstElement());
 

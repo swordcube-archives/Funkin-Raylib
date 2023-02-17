@@ -1,8 +1,8 @@
 package engine;
 
+import engine.utilities.Atlas;
 import engine.utilities.Axes;
-import engine.utilities.FrameData;
-import engine.utilities.Animation;
+import engine.utilities.AnimationController;
 import engine.Vector2;
 
 #if !macro
@@ -11,8 +11,22 @@ import Rl.Color;
 import Rl.Texture2D;
 
 class Sprite extends Object {
-    public var frames:Map<String, Array<FrameData>> = [];
-    public var animation:Animation = new Animation();
+    public var frames(default, set):Atlas;
+    private function set_frames(atlas:Atlas) {
+        if(texture != null) {
+            Rl.unloadTexture(texture);
+            texture = null;
+        }
+        texture = atlas.texture;
+        frameWidth = texture.width;
+        frameHeight = texture.height;
+        updateHitbox();
+        
+        return frames = atlas;
+    }
+
+    public var animation:AnimationController = new AnimationController();
+
     public var texture:Texture2D;
 
     public var angle:Float = 0;

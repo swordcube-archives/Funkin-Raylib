@@ -1,5 +1,7 @@
 package helpers;
 
+import engine.utilities.Atlas;
+
 class Paths {
     public inline static function asset(path:String) {
         return 'assets/$path';
@@ -19,5 +21,17 @@ class Paths {
 
     public inline static function font(path:String) {
         return asset('fonts/$path');
+    }
+
+    public inline static function xml(path:String) {
+        return asset('$path.xml');
+    }
+
+    public inline static function txt(path:String) {
+        return asset('$path.txt');
+    }
+
+    public inline static function getSparrowAtlas(path:String) {
+        return Atlas.loadSparrow(image(path), xml('images/$path'));
     }
 }
