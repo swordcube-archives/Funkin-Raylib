@@ -1,19 +1,23 @@
 package helpers;
 
 class Paths {
-    public static function image(path:String) {
-        return 'assets/images/$path.png';
+    public inline static function asset(path:String) {
+        return 'assets/$path';
     }
 
-    public static function music(path:String) {
-        return 'assets/music/$path.ogg';
+    public inline static function image(path:String) {
+        return asset('images/$path.png');
     }
 
-    public static function sound(path:String) {
-        return 'assets/sounds/$path.ogg';
+    public inline static function music(path:String) {
+        return asset('music/$path.ogg');
     }
 
-    public static function font(path:String) {
-        return 'assets/fonts/$path';
+    public inline static function sound(path:String) {
+        return asset('sounds/$path.ogg');
+    }
+
+    public inline static function font(path:String) {
+        return asset('fonts/$path');
     }
 }
