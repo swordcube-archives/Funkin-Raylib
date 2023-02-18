@@ -1,6 +1,5 @@
 package engine;
 
-import Rl.Camera2D;
 import engine.interfaces.IDestroyable;
 
 class Object implements IDestroyable {

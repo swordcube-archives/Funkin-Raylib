@@ -2,7 +2,7 @@ package engine.sound;
 
 #if !macro
 class SoundManager {
-    public var music:Audio;
+    public var music:MusicEx;
 
     public var volume(default, set):Float = 1;
     private function set_volume(v:Float) {
@@ -16,7 +16,7 @@ class SoundManager {
         return muted = v;
     }
     
-    public var list:Array<Audio> = [];
+    public var list:Array<SoundEx> = [];
     
     public function new() {
         volume = 0.3;
@@ -42,14 +42,14 @@ class SoundManager {
     }
 
     public function play(path:String, ?volume:Float) {
-        list.push(new Audio(path, volume).play());
+        list.push(new SoundEx(path, volume).play());
     }
 
     public function playMusic(path:String, ?volume:Float, ?loop:Bool = true) {
 		if (music != null)
 			music.destroy();
 
-		music = new Audio(path, volume).play();
+		music = new MusicEx(path, volume).play();
         music.loop = loop;
 	}
 }

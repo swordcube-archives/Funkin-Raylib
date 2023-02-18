@@ -1,12 +1,12 @@
 package engine;
 
-import Rl.Image;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
 import engine.utilities.AnimationController;
 import engine.math.Point2D;
 
 #if !macro
+import Rl.Image;
 import Rl.Colors;
 import Rl.Color;
 import Rl.Texture2D;
@@ -176,8 +176,6 @@ class Sprite extends Object {
         super.draw();
         angle %= 360;
         
-        Rl.beginMode2D(camera);
-
         var x:Float = (position.x + offset.x);
         var y:Float = (position.y + offset.y);
 
@@ -233,8 +231,6 @@ class Sprite extends Object {
                 color
             );
         }
-
-        Rl.endMode2D();
     }
 
     override function destroy() {

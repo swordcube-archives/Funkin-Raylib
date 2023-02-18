@@ -4,7 +4,11 @@ package engine.sound;
 import engine.Object;
 import Rl.Sound;
 
-class Audio extends Object {
+/**
+ * A class for playing short sound effects.
+ * Use `MusicEx` to play longer sounds with the ability to get the time of them.
+ */
+class SoundEx extends Object {
     private var __sound:Sound;
 
     /**

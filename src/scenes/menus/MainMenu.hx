@@ -18,14 +18,13 @@ class MainMenu extends MusicBeatScene {
         bg.scale.set(1.2, 1.2);
         bg.updateHitbox();
         bg.screenCenter();
-
-        // Tween.color(bg, 2, bg.color, Colors.RED, {ease: Ease.cubeOut});
     }
 
     override function update(elapsed:Float) {
         super.update(elapsed);
 
         if(Game.keys.justPressed(Keys.ENTER)) {
+            PlayState.SONG = Song.loadChart("fresh", "hard");
             Game.switchScene(new PlayState());
         }
     }

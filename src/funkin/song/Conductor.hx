@@ -1,6 +1,7 @@
 package funkin.song;
 
-import engine.sound.Audio;
+import engine.sound.MusicEx;
+import engine.sound.SoundEx;
 import scenes.PlayState;
 import funkin.song.SongFormat.SongData;
 
@@ -269,5 +270,11 @@ class Conductor {
 			totalSteps += deltaSteps;
 			totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
 		}
+	}
+
+	public static function isAudioSynced(sound:MusicEx) {
+		var resyncTime:Float = 20;
+		resyncTime *= sound.pitch;
+		return !(sound.time > position + resyncTime || sound.time < position - resyncTime);
 	}
 }

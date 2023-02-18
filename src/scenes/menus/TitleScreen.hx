@@ -44,7 +44,7 @@ class TitleScreen extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        Conductor.position += elapsed * 1000;
+        Conductor.position = Game.sound.music.time;
 
         if(Game.keys.justPressed(Keys.ENTER) && !confirmed) {
             confirmed = true;
