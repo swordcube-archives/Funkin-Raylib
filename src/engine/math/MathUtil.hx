@@ -1,4 +1,4 @@
-package engine.utilities;
+package engine.math;
 
 /**
  * `FlxMath` but partially ported to this shitty raylib engine.

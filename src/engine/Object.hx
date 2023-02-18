@@ -1,11 +1,13 @@
 package engine;
 
+import Rl.Camera2D;
 import engine.interfaces.IDestroyable;
 
 class Object implements IDestroyable {
     public var alive:Bool = true;
+    public var immovable:Bool = false;
     
-    public var position:Vector2 = new Vector2(0, 0);
+    public var position:Point2D = new Point2D(0, 0);
 
     public function new(?x:Float = 0, ?y:Float = 0) {
         position.set(x, y);

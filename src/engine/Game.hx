@@ -1,6 +1,6 @@
 package engine;
 
-import engine.utilities.Transition.ITransition;
+import engine.tweens.Tween;
 import engine.ui.VolumeTray;
 import engine.utilities.TimerManager;
 import engine.utilities.SignalManager;
@@ -25,27 +25,21 @@ class Game {
 	public static var nextScene:Scene;
 	public static var initialScene:Class<Scene>;
 
-	public static function switchScene(toScene:Scene, ?force:Bool = false) {
+	public static function switchScene(toScene:Scene) {
 		nextScene = toScene;
 
-		if(scene != null && scene.transIn != null && !force) {
-			if(scene != null && !(scene.subScene is ITransition))
-				scene.openSubScene(scene.transIn);
-		}
-		else {
-			signals.preSceneCreate.dispatch();
+		signals.preSceneCreate.dispatch();
 
-			if(scene != null)
-				scene.destroy();
-	
-			signals.sceneDestroy.dispatch();
+		if(scene != null)
+			scene.destroy();
 
-			scene = nextScene;
-			if(scene != null)
-				scene.create();
+		signals.sceneDestroy.dispatch();
 
-			signals.postSceneCreate.dispatch();
-		}
+		scene = nextScene;
+		if(scene != null) scene.create();
+		if(scene != null) scene.createPost();
+
+		signals.postSceneCreate.dispatch();
 	}
 
 	public function new(title:String, width:Int = 1280, height:Int = 720, fps:Int = 60, initialScene:Class<Scene>) {
@@ -59,6 +53,7 @@ class Game {
 		Rl.setWindowIcon(Rl.loadImage(Paths.image("gameIcon")));
 
 		Game.signals = new SignalManager();
+		Tween.globalManager = new TweenManager();
 		Game.keys = new KeyboardManager();
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
@@ -82,20 +77,17 @@ class Game {
 			var elapsedTime:Float = Rl.getFrameTime();
 
 			if(Game.scene != null) {
-				var updateAllowed:Bool = (Game.scene != null && (Game.scene.persistentUpdate || Game.scene.subScene == null));
-				var drawAllowed:Bool = (Game.scene != null && (Game.scene.persistentDraw || Game.scene.subScene == null));
+				Game.signals.preSceneUpdate.dispatch(elapsedTime);
+				Game.scene.tryUpdate(elapsedTime);
+				Game.signals.postSceneUpdate.dispatch(elapsedTime);
 
-				if(updateAllowed) Game.signals.preSceneUpdate.dispatch(elapsedTime);
-				Game.scene.update(elapsedTime);
-				if(updateAllowed) Game.signals.postSceneUpdate.dispatch(elapsedTime);
-
-				if(drawAllowed) Game.signals.preSceneDraw.dispatch();
+				Game.signals.preSceneDraw.dispatch();
 				Game.scene.draw();
-				if(drawAllowed) Game.signals.postSceneDraw.dispatch();
+				Game.signals.postSceneDraw.dispatch();
 			}
 
 			// Rendering volume tray
-			for(object in [volumeTray]) {
+			for(object in [volumeTray, Tween.globalManager]) {
 				if(!object.alive) continue;
 				
 				object.update(elapsedTime);

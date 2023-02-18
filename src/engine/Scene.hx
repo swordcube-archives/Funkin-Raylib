@@ -28,24 +28,12 @@ class Scene extends Group {
      */
     public var subScene:SubScene;
 
-    /**
-     * The in transition for switching to a new scene.
-     */
-    public var transIn:Transition;
+    public function create() {}
+    public function createPost() {}
 
-    /**
-     * The out transition for switching to a new scene.
-     */
-    public var transOut:Transition;
-
-    public function create() {
-        if(transOut != null)
-            openSubScene(transOut);
-    }
-
-    override function update(elapsed:Float) {
+    public function tryUpdate(elapsed:Float) {
         if(persistentUpdate || subScene == null)
-            super.update(elapsed);
+            update(elapsed);
 
         if(subScene != null)
             subScene.update(elapsed);

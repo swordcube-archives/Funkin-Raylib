@@ -1,13 +1,9 @@
 package scenes;
 
-import funkin.ui.transitions.FadeTransition;
 import funkin.interfaces.IMusicHandler;
 
 class MusicBeatScene extends Scene implements IMusicHandler {
     override function create() {
-        transIn = new FadeTransition();
-        transOut = new FadeTransition(true);
-
         Conductor.onBeatHit.add(beatHit);
         Conductor.onStepHit.add(stepHit);
         Conductor.onSectionHit.add(sectionHit);

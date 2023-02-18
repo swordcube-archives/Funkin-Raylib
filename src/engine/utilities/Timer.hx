@@ -53,6 +53,7 @@ class Timer extends Object {
                         finishCallback(this);
 
                     stop();
+                    destroy();
                 } else {
                     if(finishCallback != null)
                         finishCallback(this);

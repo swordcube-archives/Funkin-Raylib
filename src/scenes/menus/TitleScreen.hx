@@ -1,5 +1,7 @@
 package scenes.menus;
 
+import engine.tweens.Ease;
+import engine.tweens.Tween;
 import scenes.MusicBeat.MusicBeatScene;
 import engine.keyboard.Keys;
 import engine.Sprite;

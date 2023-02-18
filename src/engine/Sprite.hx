@@ -4,7 +4,7 @@ import Rl.Image;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
 import engine.utilities.AnimationController;
-import engine.Vector2;
+import engine.math.Point2D;
 
 #if !macro
 import Rl.Colors;
@@ -33,13 +33,13 @@ class Sprite extends Object {
     public var texture:Texture2D;
 
     public var angle:Float = 0;
-    public var scale:Vector2 = new Vector2(1, 1);
+    public var scale:Point2D = new Point2D(1, 1);
 
     public var color:Color = Colors.WHITE;
     public var alpha:Float = 1;
 
-    public var origin:Vector2 = new Vector2(0, 0);
-    public var offset:Vector2 = new Vector2(0, 0);
+    public var origin:Point2D = new Point2D(0, 0);
+    public var offset:Point2D = new Point2D(0, 0);
 
     public var frameWidth:Int = 0;
     public var frameHeight:Int = 0;
@@ -176,6 +176,8 @@ class Sprite extends Object {
         super.draw();
         angle %= 360;
         
+        Rl.beginMode2D(camera);
+
         var x:Float = (position.x + offset.x);
         var y:Float = (position.y + offset.y);
 
@@ -183,7 +185,7 @@ class Sprite extends Object {
 
         if(frames != null) {
             var texture:Texture2D = frames.texture;
-            var oldSize = new Vector2(texture.width, texture.height);
+            var oldSize = new Point2D(texture.width, texture.height);
 
             // adjust width and height to scale
             texture.width = Std.int(oldSize.x * scale.x);
@@ -208,7 +210,7 @@ class Sprite extends Object {
                     Rl.Rectangle.create((x + (-frameData.frameX * scale.x)) + (origin.x + (-0.5 * ((frameWidth * scale.x) - frameWidth))), (y + (-frameData.frameY * scale.y)) + (origin.y + (-0.5 * ((frameHeight * scale.y) - frameHeight))), frameData.width * scale.x, frameData.height * scale.y), // where we want to display it on screen + how big it should be
                     Rl.Vector2.create(origin.x, origin.y), // origin shit
                     angle, // rotation
-                    Colors.WHITE // tint
+                    color // tint
                 );
 
                 if(animation.reversed && animation.curAnim != null) 
@@ -231,6 +233,8 @@ class Sprite extends Object {
                 color
             );
         }
+
+        Rl.endMode2D();
     }
 
     override function destroy() {

@@ -1,5 +1,7 @@
 package scenes.menus;
 
+import engine.tweens.Tween;
+import engine.tweens.Ease;
 import scenes.MusicBeat.MusicBeatScene;
 import engine.keyboard.Keys;
 
@@ -16,6 +18,8 @@ class MainMenu extends MusicBeatScene {
         bg.scale.set(1.2, 1.2);
         bg.updateHitbox();
         bg.screenCenter();
+
+        // Tween.color(bg, 2, bg.color, Colors.RED, {ease: Ease.cubeOut});
     }
 
     override function update(elapsed:Float) {

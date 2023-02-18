@@ -1,6 +1,6 @@
 package engine.ui;
 
-import engine.utilities.MathUtil;
+import engine.math.MathUtil;
 import engine.keyboard.Keys;
 import Rl.Font;
 import Rl.Color;
@@ -32,7 +32,7 @@ class VolumeTray extends Object {
     // note to self: alpha is an INT from 0 - 255
     // this is 0.7 * 255
     public var boxColor:Color = Color.create(0, 0, 0, 178);
-    public var boxSize:Vector2 = new Vector2(80, 30);
+    public var boxSize:Point2D = new Point2D(80, 30);
 
     public var active = false;
 
