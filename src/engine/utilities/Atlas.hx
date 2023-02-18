@@ -32,7 +32,7 @@ class Atlas {
      * @param imagePath The path to the image.
      * @param xmlPath The path to the xml.
      */
-    public static function loadSparrow(imagePath:String, xmlPath:String) {
+    public static function fromSparrow(imagePath:String, xmlPath:String) {
         var atlas = new Atlas();
 
         #if !macro
@@ -45,8 +45,8 @@ class Atlas {
                 name: frame.att.name,
                 x: Std.parseInt(frame.att.x),
                 y: Std.parseInt(frame.att.y),
-                width: Std.parseInt(frame.att.width),
-                height: Std.parseInt(frame.att.height),
+                width: frame.has.frameWidth ? Std.parseInt(frame.att.frameWidth) : Std.parseInt(frame.att.width),
+                height: frame.has.frameHeight ? Std.parseInt(frame.att.frameHeight) : Std.parseInt(frame.att.height),
                 frameX: frame.has.frameX ? Std.parseInt(frame.att.frameX) : 0,
                 frameY: frame.has.frameY ? Std.parseInt(frame.att.frameY) : 0,
             });

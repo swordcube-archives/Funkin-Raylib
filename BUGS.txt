@@ -1,0 +1,1 @@
+- Angle not working correctly in the Sprite class (this can be seen clearly on the logo in the titlescreen)

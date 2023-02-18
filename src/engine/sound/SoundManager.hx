@@ -37,7 +37,8 @@ class SoundManager {
         for(sound in list)
             sound.update(elapsed);
 
-        music.update(elapsed);
+        if(music != null)
+            music.update(elapsed);
     }
 
     public function play(path:String, ?volume:Float) {

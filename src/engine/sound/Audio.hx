@@ -2,7 +2,7 @@ package engine.sound;
 
 #if !macro
 import engine.Object;
-import Rl.Sound as Sound;
+import Rl.Sound;
 
 class Audio extends Object {
     private var __sound:Sound;
@@ -23,6 +23,16 @@ class Audio extends Object {
     private function set_pitch(v:Float):Float {
         Rl.setSoundPitch(__sound, v);
         return pitch = v;
+    }
+
+    // you can't get the time of a sound in raylib :(
+
+    /**
+     * The length of this sound in milliseconds.
+     */
+    public var length(get, never):Float;
+    private function get_length():Float {
+        return (__sound.frameCount / __sound.stream.sampleRate) * 1000;
     }
 
     /**
@@ -48,11 +58,15 @@ class Audio extends Object {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
-        if(!Rl.isSoundPlaying(__sound) && loop)
+        if(!Rl.isSoundPlaying(__sound) && loop && playing)
             Rl.playSound(__sound);
     }
 
-    public function stop() {return pause();}
+    public function stop() {
+        playing = false;
+        Rl.stopSound(__sound);
+        return this;
+    }
     public function play() {return resume();}
 
     public function pause() {

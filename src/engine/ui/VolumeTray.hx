@@ -1,7 +1,6 @@
 package engine.ui;
 
 import engine.utilities.MathUtil;
-import engine.keyboard.KeyCode;
 import engine.keyboard.Keys;
 import Rl.Font;
 import Rl.Color;
@@ -15,7 +14,7 @@ enum abstract VolumeStatus(Int) to Int from Int {
 }
 
 class VolumeTray extends Object {
-    private var __globalVolume:Int = 0;
+    private var __globalVolume:Int = Std.int(Game.sound.volume * 10);
     private var __timer:Float = 0;
 
     public var volumeDownSound:String = "engine/beep";
@@ -23,9 +22,9 @@ class VolumeTray extends Object {
     public var muteSound:String = "engine/beep";
     public var unmuteSound:String = "engine/beep";
 
-    public var volumeDownKeys:Array<KeyCode> = [Keys.MINUS];
-    public var volumeUpKeys:Array<KeyCode> = [Keys.EQUAL];
-    public var muteKeys:Array<KeyCode> = [Keys.ZERO];
+    public var volumeDownKeys:Array<Int> = [Keys.MINUS];
+    public var volumeUpKeys:Array<Int> = [Keys.EQUAL];
+    public var muteKeys:Array<Int> = [Keys.ZERO];
 
     public var font:Font = Rl.loadFont(Paths.font("nokiafc22.ttf"));
     public var scale:Float = 2;
@@ -46,12 +45,14 @@ class VolumeTray extends Object {
         super.update(elapsed);
 
         if(Game.keys.anyJustPressed(volumeUpKeys)) {
-            Game.sound.volume = MathUtil.bound(Game.sound.volume + 0.1, 0, 1);
+            Game.sound.muted = false;
+            Game.sound.volume = MathUtil.roundDecimal(MathUtil.bound(Game.sound.volume + 0.1, 0, 1), 1);
             show(UP);
         }
 
         if(Game.keys.anyJustPressed(volumeDownKeys)) {
-            Game.sound.volume = MathUtil.bound(Game.sound.volume - 0.1, 0, 1);
+            Game.sound.muted = false;
+            Game.sound.volume = MathUtil.roundDecimal(MathUtil.bound(Game.sound.volume - 0.1, 0, 1), 1);
             show(DOWN);
         }
 

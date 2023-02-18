@@ -1,4 +1,4 @@
-package helpers;
+package funkin.helpers;
 
 import engine.utilities.Atlas;
 
@@ -32,6 +32,6 @@ class Paths {
     }
 
     public inline static function getSparrowAtlas(path:String) {
-        return Atlas.loadSparrow(image(path), xml('images/$path'));
+        return Atlas.fromSparrow(image(path), xml('images/$path'));
     }
 }

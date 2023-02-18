@@ -1,9 +1,9 @@
-package scenes;
+package scenes.menus;
 
-import Rl.Color;
-import Rl.Colors;
+import scenes.MusicBeat.MusicBeatScene;
+import engine.keyboard.Keys;
 
-class MainMenu extends Scene {
+class MainMenu extends MusicBeatScene {
     public var bg:Sprite;
 
     override function create() {
@@ -20,5 +20,9 @@ class MainMenu extends Scene {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
+
+        if(Game.keys.justPressed(Keys.ENTER)) {
+            Game.switchScene(new PlayState());
+        }
     }
 }

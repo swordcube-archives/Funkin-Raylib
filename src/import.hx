@@ -1,4 +1,8 @@
-import helpers.Paths;
-import engine.Sprite;
-import engine.Scene;
+import funkin.song.*;
+import funkin.helpers.*;
+
+import engine.*;
+import engine.utilities.*;
+
+using engine.utilities.StringUtil;
 using StringTools;

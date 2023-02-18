@@ -1,5 +1,6 @@
-package;
+package engine;
 
+import engine.utilities.Transition.ITransition;
 import engine.ui.VolumeTray;
 import engine.utilities.TimerManager;
 import engine.utilities.SignalManager;
@@ -15,26 +16,39 @@ class Game {
 
 	public static var timers:TimerManager;
 
-	public static var currentScene:Scene;
+	public static var scene:Scene;
 	public static var width:Int = 0;
 	public static var height:Int = 0;
 
 	public static var volumeTray:VolumeTray;
 
-	public static function switchScene(toScene:Scene) {
-		signals.preSceneCreate.dispatch();
+	public static var nextScene:Scene;
+	public static var initialScene:Class<Scene>;
 
-		if(currentScene != null)
-			currentScene.destroy();
+	public static function switchScene(toScene:Scene, ?force:Bool = false) {
+		nextScene = toScene;
 
-		signals.sceneDestroy.dispatch();
+		if(scene != null && scene.transIn != null && !force) {
+			if(scene != null && !(scene.subScene is ITransition))
+				scene.openSubScene(scene.transIn);
+		}
+		else {
+			signals.preSceneCreate.dispatch();
 
-		currentScene = toScene;
+			if(scene != null)
+				scene.destroy();
+	
+			signals.sceneDestroy.dispatch();
 
-		signals.postSceneCreate.dispatch();
+			scene = nextScene;
+			if(scene != null)
+				scene.create();
+
+			signals.postSceneCreate.dispatch();
+		}
 	}
 
-	public function new(title:String, width:Int = 1280, height:Int = 720, fps:Int = 60) {
+	public function new(title:String, width:Int = 1280, height:Int = 720, fps:Int = 60, initialScene:Class<Scene>) {
 		Game.width = width;
 		Game.height = height;
 
@@ -46,8 +60,13 @@ class Game {
 
 		Game.signals = new SignalManager();
 		Game.keys = new KeyboardManager();
-		Game.sound = new SoundManager();
 		Game.timers = new TimerManager();
+		Game.sound = new SoundManager();
+
+		Game.initialScene = initialScene;
+		Game.switchScene(Type.createInstance(initialScene, []));
+
+		start();
 	}
 
 	public function start() {
@@ -62,14 +81,17 @@ class Game {
 			// Rendering things from the current scene
 			var elapsedTime:Float = Rl.getFrameTime();
 
-			if(Game.currentScene != null) {
-				Game.signals.preSceneUpdate.dispatch(elapsedTime);
-				Game.currentScene.update(elapsedTime);
-				Game.signals.postSceneUpdate.dispatch(elapsedTime);
+			if(Game.scene != null) {
+				var updateAllowed:Bool = (Game.scene != null && (Game.scene.persistentUpdate || Game.scene.subScene == null));
+				var drawAllowed:Bool = (Game.scene != null && (Game.scene.persistentDraw || Game.scene.subScene == null));
 
-				Game.signals.preSceneDraw.dispatch();
-				Game.currentScene.draw();
-				Game.signals.postSceneDraw.dispatch();
+				if(updateAllowed) Game.signals.preSceneUpdate.dispatch(elapsedTime);
+				Game.scene.update(elapsedTime);
+				if(updateAllowed) Game.signals.postSceneUpdate.dispatch(elapsedTime);
+
+				if(drawAllowed) Game.signals.preSceneDraw.dispatch();
+				Game.scene.draw();
+				if(drawAllowed) Game.signals.postSceneDraw.dispatch();
 			}
 
 			// Rendering volume tray
