@@ -102,7 +102,7 @@ class MusicEx extends Object {
         if(!audioLoaded) return;
 
         Rl.updateMusicStream(__sound);
-        if(!Rl.isMusicStreamPlaying(__sound) && playing && time >= length) {
+        if(!Rl.isMusicStreamPlaying(__sound) && playing && !loop) {
             stop();
             if(onComplete != null)
                 onComplete();
