@@ -3,7 +3,7 @@
 # How to compile  
  1. git clone it 
  ```
- git clone https://github.com/swordcube/Funkin-Rl.git 
+ git clone https://github.com/swordcube/Funkin-Raylib.git 
  ``` 
  
  2. install the haxelib 
