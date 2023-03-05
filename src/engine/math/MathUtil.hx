@@ -230,4 +230,18 @@ class MathUtil {
     public static inline function absInt(n:Int):Int {
         return (n > 0) ? n : -n;
     }
+
+    /**
+     * Mulipies a matrix with a vector.
+     * @author Kate
+     * @param vec The vector to muliply. It's formatted in an array of 2. (`[1, 2]`)
+     * @param mat The metrix to muliply. It's formatted in 2 arrays of 2. (`[[1, 2], [3, 4]]`) 
+     * @return An array of 2 with the X and Y.
+     */
+    public static function multMatrices(vec:Array<Float>, mat:Array<Array<Float>>) {
+        return [
+            vec[0] * mat[0][0] + vec[0] * mat[0][1], 
+            vec[1] * mat[1][0] + vec[1] * mat[1][1]
+        ];
+    }
 }
