@@ -1,4 +1,4 @@
-package engine.ui;
+package engine.gui;
 
 import engine.math.MathUtil;
 import engine.keyboard.Keys;

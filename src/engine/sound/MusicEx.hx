@@ -58,7 +58,7 @@ class MusicEx extends Object {
      */
     public var length(get, never):Float;
     private function get_length():Float {
-        var ret:Float = (audioLoaded) ? ((Rl.getMusicTimeLength(__sound) * 1000) - 1000) : 0;
+        var ret:Float = (audioLoaded) ? (Rl.getMusicTimeLength(__sound) * 1000) : 0;
         if(ret < 0) ret = 0;
         return ret;
     }

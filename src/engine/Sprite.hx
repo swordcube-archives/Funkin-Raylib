@@ -150,15 +150,17 @@ class Sprite extends Object {
 	 */
     public function screenCenter(?axes:Axes = XY) {
         if(axes.x)
-            position.x = (Game.width - (frameWidth * scale.x)) * 0.5;
+            position.x = (Game.width - width) * 0.5;
 
         if(axes.y)
-            position.y = (Game.height - (frameHeight * scale.y)) * 0.5;
+            position.y = (Game.height - height) * 0.5;
 
         return this;
     }
 
-    public function makeGraphic(width:Int, height:Int, color:Color) {
+    public function makeGraphic(width:Int, height:Int, ?color:Color) {
+        if(color == null) color = Colors.WHITE;
+        
         texture = Rl.loadTextureFromImage(Rl.genImageColor(width, height, color));
         frameWidth = texture.width;
         frameHeight = texture.height;

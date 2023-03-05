@@ -49,6 +49,29 @@ class TypedGroup<T:Object> extends Object {
         return object;
     }
 
+    public function forEach(callback:T->Void) {
+        for(member in members)
+            callback(member);
+    }
+
+    public function forEachAlive(callback:T->Void) {
+        for(member in members) {
+            if(member.alive)
+                callback(member);
+            else
+                continue;
+        }
+    }
+
+    public function forEachDead(callback:T->Void) {
+        for(member in members) {
+            if(!member.alive)
+                callback(member);
+            else
+                continue;
+        }
+    }
+
     /**
      * Destroys every member of this group.
      * This does not **remove** the members from the group, so crashes could occur.

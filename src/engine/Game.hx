@@ -1,7 +1,7 @@
 package engine;
 
 import engine.tweens.Tween;
-import engine.ui.VolumeTray;
+import engine.gui.VolumeTray;
 import engine.utilities.TimerManager;
 import engine.utilities.SignalManager;
 import engine.sound.SoundManager;
@@ -27,7 +27,10 @@ class Game {
 
 	public static function switchScene(toScene:Scene) {
 		nextScene = toScene;
+		__switchToNextScene();
+	}
 
+	private static function __switchToNextScene() {
 		signals.preSceneCreate.dispatch();
 
 		if(scene != null)
@@ -37,8 +40,8 @@ class Game {
 
 		scene = nextScene;
 		if(scene != null) scene.create();
-		if(scene != null) scene.createPost();
 
+		if(scene != null) scene.createPost();
 		signals.postSceneCreate.dispatch();
 	}
 

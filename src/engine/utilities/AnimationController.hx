@@ -106,13 +106,20 @@ class AnimationController extends Object {
 
     public function play(name:String, ?force:Bool = false, ?reversed:Bool = false, ?frame:Int = 0) {
         if(!exists(name) || __animations.get(name) == null) return Logs.trace('Animation called "$name" doesn\'t exist!', ERROR);
-
         if(this.name == name && !finished && !force) return;
 
         __elapsedTime = 0;
         finished = false;
         curAnim = __animations.get(name);
         curAnim.curFrame = frame;
+
+        if(__parent != null && curAnim != null) {
+            @:privateAccess {
+                __parent.frameWidth = curAnim.__frames[0].width;
+                __parent.frameHeight = curAnim.__frames[0].height;
+            }
+            __parent.updateHitbox();
+        }
 
         this.reversed = reversed;
     }
