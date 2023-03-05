@@ -202,10 +202,20 @@ class Sprite extends Object {
                 else
                     frameData = (frames.frames != null) ? frames.frames[0] : fallbackFrameData;
                 
+                var fuckingDumbAssPi:Float = 3.14159265358979323;
+                var sin = Math.sin(angle / -180 * fuckingDumbAssPi);
+                var cos = Math.cos(angle / 180 * fuckingDumbAssPi);
+                var testCoords = [
+                    (-frameData.frameX * scale.x) * cos + (-frameData.frameY * scale.y) * sin,
+                    (-frameData.frameX * scale.x) * -sin + (-frameData.frameY * scale.y) * cos
+                ];
                 Rl.drawTexturePro(
                     texture, // the texture (woah)
                     Rl.Rectangle.create(frameData.x * scale.x, frameData.y * scale.y, frameData.width * scale.x, frameData.height * scale.y), // the coordinates of x, y, widht, and height FROM the image
-                    Rl.Rectangle.create((x + (-frameData.frameX * scale.x)) + (origin.x + (-0.5 * ((frameWidth * scale.x) - frameWidth))), (y + (-frameData.frameY * scale.y)) + (origin.y + (-0.5 * ((frameHeight * scale.y) - frameHeight))), frameData.width * scale.x, frameData.height * scale.y), // where we want to display it on screen + how big it should be
+                    Rl.Rectangle.create(
+                        (x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * scale.x) - frameWidth))),
+                        (y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * scale.y) - frameHeight))),
+                        frameData.width * scale.x, frameData.height * scale.y), // where we want to display it on screen + how big it should be
                     Rl.Vector2.create(origin.x, origin.y), // origin shit
                     angle, // rotation
                     color // tint
