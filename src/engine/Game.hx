@@ -46,6 +46,7 @@ class Game {
 		Game.width = width;
 		Game.height = height;
 
+		Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
 		Rl.initWindow(width, height, title);
 		Rl.setWindowState(4);
         Rl.setTargetFPS(fps);

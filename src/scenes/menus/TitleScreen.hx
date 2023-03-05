@@ -19,8 +19,6 @@ class TitleScreen extends MusicBeatScene {
         if(Game.sound.music == null || !Game.sound.music.playing)
             Game.sound.playMusic(Paths.music("freakyMenu"));
 
-        trace(Game.sound.music.length);
-
         Conductor.changeBPM(102);
 
         add(logo = new Sprite(-150, -100));
