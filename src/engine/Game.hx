@@ -127,7 +127,7 @@ class Game {
 				var text:String = "Game is currently unfocused";
 				var fontSize:Int = 24;
 
-				var textShit = Rl.measureTextEx(fpsFont, text, fontSize, null);
+				var textShit = Rl.measureTextEx(fpsFont, text, fontSize, 0);
 				Rl.drawTextEx(fpsFont, text, Rl.Vector2.create((Game.width - textShit.x) * 0.5, (Game.height - textShit.y) * 0.5), fontSize, 0, Colors.WHITE);
 			}
 
