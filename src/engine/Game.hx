@@ -1,5 +1,6 @@
 package engine;
 
+import Rl.Keys;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
 import engine.utilities.TimerManager;
@@ -20,10 +21,15 @@ class Game {
 	public static var width:Int = 0;
 	public static var height:Int = 0;
 
+	public static var framerate:Int = 60;
+	public static var locusLostFramerate:Int = 10;
+
 	public static var volumeTray:VolumeTray;
 
 	public static var nextScene:Scene;
 	public static var initialScene:Class<Scene>;
+
+	public static var autoPause:Bool = true;
 
 	public static function switchScene(toScene:Scene) {
 		nextScene = toScene;
@@ -45,16 +51,18 @@ class Game {
 		signals.postSceneCreate.dispatch();
 	}
 
-	public function new(title:String, width:Int = 1280, height:Int = 720, fps:Int = 60, initialScene:Class<Scene>) {
+	public function new(title:String, width:Int = 1280, height:Int = 720, framerate:Int = 60, initialScene:Class<Scene>) {
 		Game.width = width;
 		Game.height = height;
+		Game.framerate = framerate;
 
 		Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
 		Rl.initWindow(width, height, title);
 		Rl.setWindowState(4);
-        Rl.setTargetFPS(fps);
+        Rl.setTargetFPS(framerate);
 		Rl.initAudioDevice();
 		Rl.setWindowIcon(Rl.loadImage(Paths.image("gameIcon")));
+		Rl.setExitKey(Keys.NULL);
 
 		Game.signals = new SignalManager();
 		Tween.globalManager = new TweenManager();
@@ -77,25 +85,37 @@ class Game {
 			Rl.beginDrawing();
 			Rl.clearBackground(Colors.BLACK);
 
-			// Rendering things from the current scene
-			var elapsedTime:Float = Rl.getFrameTime();
+			if(!(!Rl.isWindowFocused() && autoPause)) {
+				Rl.setTargetFPS(framerate);
 
-			if(Game.scene != null) {
-				Game.signals.preSceneUpdate.dispatch(elapsedTime);
-				Game.scene.tryUpdate(elapsedTime);
-				Game.signals.postSceneUpdate.dispatch(elapsedTime);
+				// Rendering things from the current scene
+				var elapsedTime:Float = Rl.getFrameTime();
 
-				Game.signals.preSceneDraw.dispatch();
-				Game.scene.draw();
-				Game.signals.postSceneDraw.dispatch();
-			}
+				if(Game.scene != null) {
+					Game.signals.preSceneUpdate.dispatch(elapsedTime);
+					Game.scene.tryUpdate(elapsedTime);
+					Game.signals.postSceneUpdate.dispatch(elapsedTime);
 
-			// Rendering volume tray
-			for(object in [volumeTray, Tween.globalManager]) {
-				if(!object.alive) continue;
-				
-				object.update(elapsedTime);
-				object.draw();
+					Game.signals.preSceneDraw.dispatch();
+					Game.scene.draw();
+					Game.signals.postSceneDraw.dispatch();
+				}
+
+				// Rendering volume tray
+				for(object in [volumeTray, Tween.globalManager]) {
+					if(!object.alive) continue;
+					
+					object.update(elapsedTime);
+					object.draw();
+				}
+			} else {
+				Rl.setTargetFPS(locusLostFramerate);
+
+				var text:String = "Game is currently unfocused";
+				var fontSize:Int = 24;
+
+				var textShit = Rl.measureTextEx(fpsFont, text, fontSize, null);
+				Rl.drawTextEx(fpsFont, text, Rl.Vector2.create((Game.width - textShit.x) * 0.5, (Game.height - textShit.y) * 0.5), fontSize, 0, Colors.WHITE);
 			}
 
 			// Rendering FPS counter

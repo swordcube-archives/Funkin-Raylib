@@ -50,15 +50,17 @@ class Sprite extends Object {
     public var antialiasing(default, set):Bool;
     private function set_antialiasing(v:Bool) {
         if(texture != null)
-            Rl.setTextureFilter(texture, (v) ? 6 : 0);
+            Rl.setTextureFilter(texture, (v) ? 1 : 0);
 
         return antialiasing = v;
     }
 
+    public static var defaultAntialiasing:Bool = true;
+
     public function new(?x:Float = 0, ?y:Float = 0) {
         super(x, y);
         this.animation = new AnimationController(this);
-        this.antialiasing = true;
+        this.antialiasing = defaultAntialiasing;
     }
 
     public function loadGraphicFromTexture(texture:Texture2D, ?width:Int = 0, ?height:Int = 0) {

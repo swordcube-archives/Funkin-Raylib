@@ -57,6 +57,8 @@ class MainMenu extends MusicBeatScene {
             button.animation.play((curSelected == button.ID) ? "selected" : "idle");
             button.screenCenter(X);
         });
+
+        Game.sound.play(Paths.sound("menus/scrollMenu"));
     }
 
     override function update(elapsed:Float) {
