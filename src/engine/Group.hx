@@ -24,19 +24,34 @@ class TypedGroup<T:Object> extends Object {
 
     override function update(elapsed:Float) {
         for(member in members) {
-            if(!member.alive) continue;
+            if(member == null || !member.alive) continue;
             member.update(elapsed);
         }
     }
 
     override function draw() {
         for(member in members) {
-            if(!member.alive) continue;
+            if(member == null || !member.alive) continue;
             member.draw();
         }
     }
 
+    /**
+     * Adds anything that is/extends an `Object` to this group.
+     * @param object The object to add.
+     */
     public function add(object:T) {
+        if(object == null) {
+            Logs.trace("Cannot add a `null` object into a Group.", ERROR);
+            return null;
+        }
+
+		// Don't bother adding an object twice.
+		if (members.indexOf(object) >= 0)
+			return object;
+
+        // Make sure we don't have the maximum amount of objects allowed in the group.
+        // 0 and below is equal to infinite.
         if(maxSize > 0 && members.length >= maxSize)
             return object;
 
@@ -44,19 +59,49 @@ class TypedGroup<T:Object> extends Object {
         return object;
     }
 
+    /**
+     * Inserts anything that is/extends an `Object` to this group at a specific position.
+     * @param position The position to add the object at.
+     * @param object The object to add.
+     */
+    public function insert(position:Int, object:T) {
+        if(object == null) {
+            Logs.trace("Cannot insert a `null` object into a Group.", ERROR);
+            return null;
+        }
+
+		// Don't bother adding an object twice.
+		if (members.indexOf(object) >= 0)
+			return object;
+
+        // Make sure we don't have the maximum amount of objects allowed in the group.
+        // 0 and below is equal to infinite.
+        if(maxSize > 0 && members.length >= maxSize)
+            return object;
+
+        members.insert(position, object);
+        return object;
+    }
+
+    /**
+     * Removes anything that is/extends an `Object` from this group.
+     * @param object The object to remove.
+     */
     public function remove(object:T) {
         members.remove(object);
         return object;
     }
 
     public function forEach(callback:T->Void) {
-        for(member in members)
+        for(member in members) {
+            if(member == null) continue;
             callback(member);
+        }
     }
 
     public function forEachAlive(callback:T->Void) {
         for(member in members) {
-            if(member.alive)
+            if(member == null || member.alive)
                 callback(member);
             else
                 continue;
@@ -65,7 +110,7 @@ class TypedGroup<T:Object> extends Object {
 
     public function forEachDead(callback:T->Void) {
         for(member in members) {
-            if(!member.alive)
+            if(member == null || !member.alive)
                 callback(member);
             else
                 continue;
@@ -77,7 +122,18 @@ class TypedGroup<T:Object> extends Object {
      * This does not **remove** the members from the group, so crashes could occur.
      */
     override function destroy() {
-        for(member in members)
+        for(member in members) {
+            if(member == null) continue;
             member.destroy();
+        }
+        clear();
+    }
+
+    /**
+     * Removes all members from this group.
+     * This does not **kill** or **destroy** the members automatically!
+     */
+    public function clear() {
+        members = [];
     }
 }
