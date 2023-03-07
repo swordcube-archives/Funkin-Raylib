@@ -89,11 +89,12 @@ class PlayState extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        Conductor.position += elapsed * 1000;
         if(startingSong) {
+            Conductor.position += elapsed * 1000;
             if(Conductor.position >= 0)
                 startSong();
-        }
+        } else // TODO: figure out how to make resync vocals work correctly
+            Conductor.position = inst.time;
 
         if(unspawnNotes[0] != null) {
             while(unspawnNotes[0] != null && unspawnNotes[0].strumTime <= Conductor.position + (2500 / scrollSpeed))
