@@ -113,12 +113,12 @@ class AnimationController extends Object {
         curAnim = __animations.get(name);
         curAnim.curFrame = frame;
 
-        if(__parent != null && curAnim != null) {
-            @:privateAccess {
+        @:privateAccess {
+            if(__parent != null && curAnim != null && curAnim.__frames[0] != null) {
                 __parent.frameWidth = curAnim.__frames[0].width;
                 __parent.frameHeight = curAnim.__frames[0].height;
+                __parent.updateHitbox();
             }
-            __parent.updateHitbox();
         }
 
         this.reversed = reversed;

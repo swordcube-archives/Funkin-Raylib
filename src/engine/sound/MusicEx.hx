@@ -66,7 +66,7 @@ class MusicEx extends Object {
     /**
      * Whether or not this sound is playing.
      */
-    public var playing:Bool = true;
+    public var playing:Bool = false;
 
     /**
      * Whether or not this sound is looping.
@@ -101,7 +101,9 @@ class MusicEx extends Object {
         super.update(elapsed);
         if(!audioLoaded) return;
 
-        Rl.updateMusicStream(__sound);
+        if(playing)
+            Rl.updateMusicStream(__sound);
+        
         if(!Rl.isMusicStreamPlaying(__sound) && playing && !loop) {
             stop();
             if(onComplete != null)

@@ -31,6 +31,17 @@ class Game {
 
 	public static var autoPause:Bool = true;
 
+	public static var elapsed(get, never):Float;
+	private static inline function get_elapsed():Float {
+		var elapsedTime:Float = Rl.getFrameTime();
+		if(elapsedTime > maxElapsed)
+			elapsedTime = maxElapsed;
+
+		return elapsedTime;
+	}
+
+	public static var maxElapsed:Float = 0.1;
+
 	public static function switchScene(toScene:Scene) {
 		nextScene = toScene;
 		__switchToNextScene();
@@ -90,6 +101,8 @@ class Game {
 
 				// Rendering things from the current scene
 				var elapsedTime:Float = Rl.getFrameTime();
+				if(elapsedTime > maxElapsed)
+					elapsedTime = maxElapsed;
 
 				if(Game.scene != null) {
 					Game.signals.preSceneUpdate.dispatch(elapsedTime);

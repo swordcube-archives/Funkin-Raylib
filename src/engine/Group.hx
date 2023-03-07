@@ -101,7 +101,7 @@ class TypedGroup<T:Object> extends Object {
 
     public function forEachAlive(callback:T->Void) {
         for(member in members) {
-            if(member == null || member.alive)
+            if(member != null && member.alive)
                 callback(member);
             else
                 continue;
@@ -110,7 +110,7 @@ class TypedGroup<T:Object> extends Object {
 
     public function forEachDead(callback:T->Void) {
         for(member in members) {
-            if(member == null || !member.alive)
+            if(member != null && !member.alive)
                 callback(member);
             else
                 continue;

@@ -42,7 +42,7 @@ class SoundEx extends Object {
     /**
      * Whether or not this sound is playing.
      */
-    public var playing:Bool = true;
+    public var playing:Bool = false;
 
     /**
      * Whether or not this sound is looping.
@@ -58,6 +58,7 @@ class SoundEx extends Object {
         this.volume = volume;
         this.pitch = 1;
         Rl.playSound(__sound);
+        Rl.pauseSound(__sound);
     }
 
     override function update(elapsed:Float) {

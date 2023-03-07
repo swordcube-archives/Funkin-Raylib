@@ -31,6 +31,7 @@ class Timer extends Object {
         this.finishCallback = finishCallback;
         this.loops = this.loopsLeft = loops;
         this.active = true;
+        return this;
     }
 
     override function update(elapsed:Float) {
