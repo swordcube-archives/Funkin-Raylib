@@ -1,5 +1,6 @@
 package engine.sound;
 
+import engine.interfaces.ISound;
 #if !macro
 class SoundManager {
     public var music:MusicEx;
@@ -16,7 +17,7 @@ class SoundManager {
         return muted = v;
     }
     
-    public var list:Array<SoundEx> = [];
+    public var list:Array<ISound> = [];
     
     public function new() {
         volume = 0.3;
@@ -26,6 +27,7 @@ class SoundManager {
                 sound.kill();
                 sound.stop();
                 sound.destroy();
+                sound = null;
             }
             list = [];
         });
@@ -34,8 +36,10 @@ class SoundManager {
     }
 
     public function update(elapsed:Float) {
-        for(sound in list)
-            sound.update(elapsed);
+        for(sound in list) {
+            if(sound != null)
+                sound.update(elapsed);
+        }
 
         if(music != null)
             music.update(elapsed);

@@ -1,5 +1,6 @@
 package engine.sound;
 
+import engine.interfaces.ISound;
 import engine.utilities.typeLimit.OneOfTwo;
 import sys.FileSystem;
 #if !macro
@@ -12,7 +13,7 @@ import Rl.Music;
  * 
  * Do ***NOT*** use this class for every sound, only use it when necessary.
  */
-class MusicEx extends Object {
+class MusicEx extends Object implements ISound {
     public var audioLoaded:Bool = false;
 
     private var __sound:Music;

@@ -50,11 +50,11 @@ class PlayState extends MusicBeatScene {
         scriptTest = new HScript(Paths.script("data/scripts/testing"));
         scriptTest.setParent(this);
 
-        add(inst = new MusicEx(Paths.songInst(SONG.song), 1, false));
+        Game.sound.list.push(inst = new MusicEx(Paths.songInst(SONG.song), 1, false));
         inst.onComplete = endSong;
         inst.pitch = Game.timeScale;
 
-        add(vocals = new MusicEx(Paths.songVoices(SONG.song), 1, false));
+        Game.sound.list.push(vocals = new MusicEx(Paths.songVoices(SONG.song), 1, false));
         vocals.pitch = Game.timeScale;
 
         add(cpuStrums = new TypedGroup<Receptor>());

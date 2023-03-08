@@ -1,6 +1,8 @@
 package funkin.objects.ui;
 
 class Receptor extends Sprite {
+    public var NOTE_SIZE:Float = 156;
+
     public var initialScale:Float = 0.7;
     public var scrollSpeed:Null<Float> = null;
     
@@ -33,7 +35,7 @@ class Receptor extends Sprite {
         offset.x = frameWidth * -0.5;
         offset.y = frameHeight * -0.5;
 
-        offset.x += 156 * (initialScale * 0.5);
-        offset.y += 156 * (initialScale * 0.5);
+        offset.x += NOTE_SIZE * (initialScale * 0.5);
+        offset.y += NOTE_SIZE * (initialScale * 0.5);
     }
 }

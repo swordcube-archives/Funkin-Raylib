@@ -119,7 +119,10 @@ class AnimationController extends Object {
             if(__parent != null && curAnim != null && curAnim.__frames[0] != null) {
                 __parent.frameWidth = curAnim.__frames[0].width;
                 __parent.frameHeight = curAnim.__frames[0].height;
-                __parent.updateHitbox();
+
+                __parent.width = Std.int(Math.abs(__parent.scale.x) * __parent.frameWidth);
+                __parent.height = Std.int(Math.abs(__parent.scale.y) * __parent.frameHeight);
+                __parent.centerOrigin();
             }
         }
 

@@ -55,6 +55,7 @@ class MainMenu extends MusicBeatScene {
 
         grpButtons.forEach((button:Sprite) -> {
             button.animation.play((curSelected == button.ID) ? "selected" : "idle");
+            button.updateHitbox();
             button.screenCenter(X);
         });
 

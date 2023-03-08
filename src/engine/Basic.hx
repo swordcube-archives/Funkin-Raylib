@@ -1,8 +1,8 @@
 package engine;
 
-import engine.interfaces.IDestroyable;
+import engine.interfaces.IBasic;
 
-class Basic implements IDestroyable {
+class Basic implements IBasic {
 	public var ID:Int = 0;
 
 	/**

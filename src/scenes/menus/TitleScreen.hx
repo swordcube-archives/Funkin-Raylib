@@ -28,8 +28,8 @@ class TitleScreen extends MusicBeatScene {
         gfDance.frames = Paths.getSparrowAtlas("menus/title/gfDanceTitle");
         gfDance.animation.addByIndices("danceLeft", "gfDance", [for(i in 0...15) i], 24, false);
         gfDance.animation.addByIndices("danceRight", "gfDance", [for(i in 15...30) i], 24, false);
-        gfDance.animation.play("danceLeft");
         gfDance.scale.set(1, -1);
+        gfDance.animation.play("danceLeft");        
 
         add(titleEnter = new Sprite(100, Game.height * 0.8));
         titleEnter.frames = Paths.getSparrowAtlas("menus/title/titleEnter");
@@ -44,6 +44,7 @@ class TitleScreen extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
+        // gfDance.angle += elapsed * 25;
         Conductor.position = Game.sound.music.time;
 
         if(Game.keys.justPressed(Keys.ENTER) && !confirmed) {

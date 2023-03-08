@@ -1,5 +1,6 @@
 package engine.sound;
 
+import engine.interfaces.ISound;
 import sys.FileSystem;
 #if !macro
 import engine.Object;
@@ -9,7 +10,7 @@ import Rl.Sound;
  * A class for playing short sound effects.
  * Use `MusicEx` to play longer sounds with the ability to get the time of them.
  */
-class SoundEx extends Object {
+class SoundEx extends Object implements ISound {
     public var audioLoaded:Bool = false;
 
     private var __sound:Sound;

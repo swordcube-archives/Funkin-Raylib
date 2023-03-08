@@ -281,10 +281,6 @@ class Sprite extends Object {
             // TODO: fix all of this to work with negative scales correctly
             // (it should just display the sprite but flipped on x and/or y axis)
 
-			// adjust width and height to scale
-			texture.width = Std.int(oldSize.x * scale.x);
-			texture.height = Std.int(oldSize.y * scale.y);
-
 			// draw the thing
 			@:privateAccess {
 				if (animation.reversed && animation.curAnim != null)
@@ -309,21 +305,21 @@ class Sprite extends Object {
 				var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
 				var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
 				var testCoords = [
-					(-frameData.frameX * scale.x) * cos + (-frameData.frameY * scale.y) * sin,
-					(-frameData.frameX * scale.x) * -sin + (-frameData.frameY * scale.y) * cos
+					(-frameData.frameX * Math.abs(scale.x)) * cos + (-frameData.frameY * Math.abs(scale.y)) * sin,
+					(-frameData.frameX * Math.abs(scale.x)) * -sin + (-frameData.frameY * Math.abs(scale.y)) * cos
 				];
 				Rl.drawTexturePro(texture, // the texture (woah)
 					Rl.Rectangle.create(
-                        frameData.x * scale.x, 
-                        frameData.y * scale.y, 
-                        frameData.width * scale.x,
-						frameData.height * scale.y
+                        frameData.x, 
+                        frameData.y, 
+                        frameData.width * (scale.x < 0 ? -1 : 1),
+						frameData.height * (scale.y < 0 ? -1 : 1)
                     ), // the coordinates of x, y, width, and height FROM the image
 					Rl.Rectangle.create(
-                        (x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * scale.x) - frameWidth))),
-						(y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * scale.y) - frameHeight))), 
-                        frameData.width * scale.x,
-						frameData.height * scale.y
+                        (x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
+						(y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight))), 
+                        frameData.width * Math.abs(scale.x),
+						frameData.height * Math.abs(scale.y)
                     ), // where we want to display it on screen + how big it should be
 					Rl.Vector2.create(origin.x, origin.y), // origin shit
 					angle, // rotation
@@ -333,10 +329,6 @@ class Sprite extends Object {
 				if (animation.reversed && animation.curAnim != null)
 					animation.curAnim.__frames.reverse();
 			}
-
-			// set the width and height back
-			texture.width = Std.int(oldSize.x);
-			texture.height = Std.int(oldSize.y);
 		} else {
 			texture.width = Std.int(frameWidth * scale.x);
 			texture.height = Std.int(frameHeight * scale.y);

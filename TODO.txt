@@ -7,5 +7,7 @@
 - Note Splashes
 
 --- RAYFLIXEL (codename for framework, has flixel in name bc it's a flixel LIKE 2d framework) ---
+[BUGS]
+- Negative Scale (Mostly works, animated sprites are a little broken in terms of positioning)
 [FEATURES]
 - Object Collision
