@@ -19,9 +19,9 @@ package engine.tweens;
  */
 class Ease {
 	/** Easing constants */
-	static var PI2:Float = Math.PI / 2;
+	static var PI2:Float = MathUtil.STANDARD_PI / 2;
 
-	static var EL:Float = 2 * Math.PI / .45;
+	static var EL:Float = 2 * MathUtil.STANDARD_PI / .45;
 	static var B1:Float = 1 / 2.75;
 	static var B2:Float = 2 / 2.75;
 	static var B3:Float = 1.5 / 2.75;
@@ -123,7 +123,7 @@ class Ease {
 	}
 
 	public static inline function sineInOut(t:Float):Float {
-		return -Math.cos(Math.PI * t) / 2 + .5;
+		return -Math.cos(MathUtil.STANDARD_PI * t) / 2 + .5;
 	}
 
 	public static function bounceIn(t:Float):Float {
@@ -210,20 +210,20 @@ class Ease {
 
 	public static inline function elasticIn(t:Float):Float {
 		return -(ELASTIC_AMPLITUDE * Math.pow(2,
-			10 * (t -= 1)) * Math.sin((t - (ELASTIC_PERIOD / (2 * Math.PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (2 * Math.PI) / ELASTIC_PERIOD));
+			10 * (t -= 1)) * Math.sin((t - (ELASTIC_PERIOD / (2 * MathUtil.STANDARD_PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (2 * MathUtil.STANDARD_PI) / ELASTIC_PERIOD));
 	}
 
 	public static inline function elasticOut(t:Float):Float {
 		return (ELASTIC_AMPLITUDE * Math.pow(2,
-			-10 * t) * Math.sin((t - (ELASTIC_PERIOD / (2 * Math.PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (2 * Math.PI) / ELASTIC_PERIOD)
+			-10 * t) * Math.sin((t - (ELASTIC_PERIOD / (2 * MathUtil.STANDARD_PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (2 * MathUtil.STANDARD_PI) / ELASTIC_PERIOD)
 			+ 1);
 	}
 
 	public static function elasticInOut(t:Float):Float {
 		if (t < 0.5) {
-			return -0.5 * (Math.pow(2, 10 * (t -= 0.5)) * Math.sin((t - (ELASTIC_PERIOD / 4)) * (2 * Math.PI) / ELASTIC_PERIOD));
+			return -0.5 * (Math.pow(2, 10 * (t -= 0.5)) * Math.sin((t - (ELASTIC_PERIOD / 4)) * (2 * MathUtil.STANDARD_PI) / ELASTIC_PERIOD));
 		}
-		return Math.pow(2, -10 * (t -= 0.5)) * Math.sin((t - (ELASTIC_PERIOD / 4)) * (2 * Math.PI) / ELASTIC_PERIOD) * 0.5 + 1;
+		return Math.pow(2, -10 * (t -= 0.5)) * Math.sin((t - (ELASTIC_PERIOD / 4)) * (2 * MathUtil.STANDARD_PI) / ELASTIC_PERIOD) * 0.5 + 1;
 	}
 }
 

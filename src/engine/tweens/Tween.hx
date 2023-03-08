@@ -727,7 +727,7 @@ typedef TweenOptions = {
  */
 @:access(engine.tweens)
 @:access(engine.tweens.Tween)
-class TweenManager extends Object {
+class TweenManager extends Basic {
 	/**
 	 * A list of all Tween objects.
 	 */

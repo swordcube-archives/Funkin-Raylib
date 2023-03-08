@@ -1,7 +1,17 @@
+# Generic Haxe shit to make the game compile
 -cp src
 -D analyzer-optimize
 -main Main
+
+# Libraries (MAKE SURE TO KEEP THIS IN SYNC WITH ALL BUILD FILES)
 --library raylib-hx
+--library hscript-improved
+
+# Defines (MAKE SURE TO KEEP THIS IN SYNC WITH ALL BUILD FILES)
+--define hscriptPos
+--dce no
+
+# Copying the assets from source code to bin folder
 --cmd rm -rf bin/cpp/assets
 --cmd cp -r assets bin/cpp/assets
 --cpp bin/cpp

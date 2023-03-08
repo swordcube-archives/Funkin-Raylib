@@ -37,13 +37,13 @@ class CircularMotion extends Motion {
 		_centerX = CenterX;
 		_centerY = CenterY;
 		_radius = Radius;
-		this.angle = _angleStart = Angle * (3.141592653589793) / (-180);
-		_angleFinish = ((3.141592653589793) * 2) * (Clockwise ? 1 : -1);
+		this.angle = _angleStart = Angle * (MathUtil.STANDARD_PI) / (-180);
+		_angleFinish = ((MathUtil.STANDARD_PI) * 2) * (Clockwise ? 1 : -1);
 
 		if (UseDuration) {
 			duration = DurationOrSpeed;
 		} else {
-			duration = (_radius * ((3.141592653589793) * 2)) / DurationOrSpeed;
+			duration = (_radius * ((MathUtil.STANDARD_PI) * 2)) / DurationOrSpeed;
 		}
 
 		start();
@@ -61,6 +61,6 @@ class CircularMotion extends Motion {
 	}
 
 	function get_circumference():Float {
-		return _radius * ((3.141592653589793) * 2);
+		return _radius * ((MathUtil.STANDARD_PI) * 2);
 	}
 }

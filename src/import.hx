@@ -7,6 +7,7 @@ import funkin.song.*;
 import funkin.helpers.*;
 
 import engine.*;
+import engine.keyboard.Keys;
 import engine.math.*;
 import engine.utilities.*;
 

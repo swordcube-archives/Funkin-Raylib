@@ -141,6 +141,8 @@ class MusicEx extends Object {
         if(audioLoaded)
             Rl.unloadMusicStream(__sound);
 
+        audioLoaded = false;
+
         super.destroy();
     }
 }

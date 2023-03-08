@@ -15,6 +15,8 @@ class AnimationController extends Object {
     
     //** Helper Functions & Variables **//
 
+    public var finishCallback:String->Void;
+
     /**
      * The currently loaded animation.
      * 
@@ -150,8 +152,11 @@ class AnimationController extends Object {
             else {
                 if(curAnim.loop)
                     curAnim.curFrame = 0;
-                else
+                else {
                     finished = true;
+                    if(finishCallback != null)
+                        finishCallback(name);
+                }
             }
             __elapsedTime = 0;
         }

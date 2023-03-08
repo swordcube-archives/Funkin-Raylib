@@ -1,6 +1,7 @@
 package scenes;
 
-import Rl.Keys;
+import funkin.backend.hscript.HScript;
+import engine.keyboard.Keys;
 import funkin.objects.ui.NoteField;
 import engine.tweens.Ease;
 import engine.tweens.Tween;
@@ -31,6 +32,8 @@ class PlayState extends MusicBeatScene {
     public var unspawnNotes:Array<Note>;
     public var scrollSpeed:Float = 2.7;
 
+    public var scriptTest:HScript;
+
     override function create() {
         super.create();
         current = this;
@@ -44,10 +47,15 @@ class PlayState extends MusicBeatScene {
         if(SONG.keyCount == null)
             SONG.keyCount = 4;
 
+        scriptTest = new HScript(Paths.script("data/scripts/testing"));
+        scriptTest.setParent(this);
+
         add(inst = new MusicEx(Paths.songInst(SONG.song), 1, false));
         inst.onComplete = endSong;
+        inst.pitch = Game.timeScale;
 
         add(vocals = new MusicEx(Paths.songVoices(SONG.song), 1, false));
+        vocals.pitch = Game.timeScale;
 
         add(cpuStrums = new TypedGroup<Receptor>());
         add(playerStrums = new TypedGroup<Receptor>());
@@ -68,10 +76,17 @@ class PlayState extends MusicBeatScene {
             var receptor = new Receptor((Note.swagWidth * i) + ((Game.width * 0.5) + receptorOffset), strumY, SONG.keyCount, i);
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
+            if(SettingsAPI.botplay) {
+                receptor.animation.finishCallback = (name:String) -> {
+                    if(name == "confirm")
+                        receptor.playAnim("static", true);
+                };
+            }
             playerStrums.add(receptor);
         }
 
         unspawnNotes = ChartParser.parseNotes(SONG);
+        scriptTest.call("onCreate");
 
         startCountdown();
     }
@@ -91,27 +106,58 @@ class PlayState extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        Conductor.position += elapsed * 1000;
+        scriptTest.call("onUpdate", [elapsed]);
+
+        if(!endingSong)
+            Conductor.position += elapsed * 1000;
+
         if(startingSong) {
             if(Conductor.position >= 0)
                 startSong();
         }
 
-        if(unspawnNotes[0] != null) {
-            while(unspawnNotes[0] != null && unspawnNotes[0].strumTime <= Conductor.position + (2500 / scrollSpeed))
+        if(unspawnNotes[0] != null && !endingSong) {
+            while(unspawnNotes[0] != null && unspawnNotes[0].strumTime <= Conductor.position + (2500 / (scrollSpeed / Game.timeScale)))
                 notes.add(unspawnNotes.shift());
         }
 
         keyShit();
     }
 
+    public var keyBinds:Array<Int> = [
+        Keys.S,
+        Keys.D,
+        Keys.K,
+        Keys.L
+    ];
+
+    public function goodNoteHit(note:Note) {
+        if(note.mustPress) {
+            playerStrums.members[note.noteData].playAnim("confirm", true);
+
+            if(!note.isSustainNote) {
+                var ratingSpr:Sprite = new Sprite((Game.width * 0.55) - 40, (Game.height * 0.5) - 60).loadGraphic(Paths.image('gameplay/ratings/sick'));
+                ratingSpr.scale.set(0.7, 0.7);
+                ratingSpr.updateHitbox();
+                ratingSpr.alpha = 1;
+                ratingSpr.acceleration.y = 550;
+                ratingSpr.velocity.y = -Game.random.int(140, 175);
+                ratingSpr.velocity.x = -Game.random.int(0, 10);
+                add(ratingSpr);
+
+                Tween.tween(ratingSpr, {alpha: 0}, 0.2, {
+                    onComplete: (tween:Tween) -> {
+                        ratingSpr.kill();
+                    },
+                    startDelay: Conductor.crochet * 0.001
+                });
+            }
+        }
+        notes.deleteNote(note);
+    }
+
     public function keyShit() {
-        var keyBinds:Array<Int> = [
-            Keys.S,
-            Keys.D,
-            Keys.K,
-            Keys.L
-        ];
+        if(SettingsAPI.botplay) return;
 
         for(i => bind in keyBinds) {
             if(Game.keys.justPressed(bind))
@@ -120,7 +166,7 @@ class PlayState extends MusicBeatScene {
 
         var possibleNotes:Array<Note> = [];
         notes.forEachAlive((note:Note) -> {
-            if(!note.mustPress || !note.canBeHit) return;
+            if(!note.mustPress || !note.canBeHit || note.isSustainNote) return;
             possibleNotes.push(note);
         });
         possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
@@ -129,8 +175,7 @@ class PlayState extends MusicBeatScene {
         for(note in possibleNotes) {
             if(!Game.keys.justPressed(keyBinds[note.noteData]) || hitBlocked[note.noteData]) continue;
             hitBlocked[note.noteData] = true;
-            playerStrums.members[note.noteData].playAnim("confirm", true);
-            notes.deleteNote(note);
+            goodNoteHit(note);
         }
 
         for(i => bind in keyBinds) {
@@ -142,25 +187,33 @@ class PlayState extends MusicBeatScene {
     override function beatHit(v:Int) {
         super.beatHit(v);
 
-        if(Math.abs(Conductor.position - inst.time) > 20) {
-            inst.pause();
-            vocals.pause();
+        if(startingSong || endingSong) return;
 
-            inst.time = vocals.time = Conductor.position;
+        var resyncTime:Float = 20 * Game.timeScale;
+        if(Math.abs(Conductor.position - inst.time) > resyncTime || Math.abs(Conductor.position - vocals.time) > resyncTime)
+            resyncVocals();
+    }
 
-            inst.play();
-            vocals.play();
-        }
+    public function resyncVocals() {
+        inst.pause();
+        vocals.pause();
+
+        inst.time = vocals.time = Conductor.position;
+
+        inst.play();
+        vocals.play();
     }
 
     public function startSong() {
         startingSong = false;
-        Conductor.position = 0;
+        inst.time = vocals.time = Conductor.position = 0;
         inst.play();
         vocals.play();
     }
 
     public function endSong() {
+        Game.timeScale = 1;
+        endingSong = true;
         Game.switchScene(new MainMenu());
     }
 

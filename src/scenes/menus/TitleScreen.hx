@@ -29,12 +29,16 @@ class TitleScreen extends MusicBeatScene {
         gfDance.animation.addByIndices("danceLeft", "gfDance", [for(i in 0...15) i], 24, false);
         gfDance.animation.addByIndices("danceRight", "gfDance", [for(i in 15...30) i], 24, false);
         gfDance.animation.play("danceLeft");
+        gfDance.scale.set(1, -1);
 
         add(titleEnter = new Sprite(100, Game.height * 0.8));
         titleEnter.frames = Paths.getSparrowAtlas("menus/title/titleEnter");
         titleEnter.animation.addByPrefix("idle", "Press Enter to Begin", 24);
         titleEnter.animation.addByPrefix("press", "ENTER PRESSED", 24);
         titleEnter.animation.play("idle");
+
+        // preload confirm sound i think?
+        Game.sound.play(Paths.sound("menus/confirmMenu"), 0);
     }
 
     override function update(elapsed:Float) {

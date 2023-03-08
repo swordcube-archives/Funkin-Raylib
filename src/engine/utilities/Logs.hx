@@ -6,6 +6,7 @@ enum abstract LogType(Int) from Int to Int {
     var ERROR = 2;
     var TRACE = 3;
     var VERBOSE = 4;
+    var ENGINE = 5;
 }
 
 /**
@@ -29,14 +30,15 @@ class Logs {
 
     public static function trace(value:Dynamic, type:LogType, ?showTag:Bool = true) {
         var time = Date.now();
-        var timeStr:String = '${colors["green"]}[${Std.string(time.getHours()).addZeros(2)}:${Std.string(time.getMinutes()).addZeros(2)}:${Std.string(time.getSeconds()).addZeros(2)}] ';
+        var timeStr:String = '${colors["cyan"]}[${Std.string(time.getHours()).addZeros(2)}:${Std.string(time.getMinutes()).addZeros(2)}:${Std.string(time.getSeconds()).addZeros(2)}] ';
 
         Sys.println(switch(type) {
-            case WARNING: timeStr + colors["yellow"] +  (showTag ? "[ 🟡 WARNING ] " : "") + value + colors["reset"];
-            case ERROR:   timeStr + colors["red"] +     (showTag ? "[  🔴 ERROR  ] " : "") + value + colors["reset"];
-            case TRACE:   timeStr + colors["gray"] +    (showTag ? "[  ❕  TRACE  ] " : "") + value + colors["reset"];
-            case VERBOSE: timeStr + colors["magenta"] + (showTag ? "[ 🟣 VERBOSE ] " : "") + value + colors["reset"];
-            default:      timeStr + colors["cyan"] +    (showTag ? "[  🔵 INFO   ] " : "") + value + colors["reset"];
+            case WARNING: timeStr + colors["yellow"] +  (showTag ? "[ WARNING ] " : "") + colors["reset"] + value;
+            case ERROR:   timeStr + colors["red"] +     (showTag ? "[ ERROR ] " : "") + colors["reset"] + value;
+            case TRACE:   timeStr + colors["gray"] +    (showTag ? "[ TRACE ] " : "") + colors["reset"] + value;
+            case VERBOSE: timeStr + colors["magenta"] + (showTag ? "[ VERBOSE ] " : "") + colors["reset"] + value;
+            case ENGINE:  timeStr + colors["green"] +   (showTag ? "[ ENGINE ] " : "") + colors["reset"] + value;
+            default:      timeStr + colors["cyan"] +    (showTag ? "[ INFO ] " : "") + colors["reset"] + value;
         });
     }
 }

@@ -21,7 +21,7 @@ class SoundManager {
     public function new() {
         volume = 0.3;
         Game.signals.preSceneCreate.add(() -> {
-            trace("[ENGINE] Clearing sounds...");
+            Logs.trace("Clearing sounds...", ENGINE);
             for(sound in list) {
                 sound.kill();
                 sound.stop();

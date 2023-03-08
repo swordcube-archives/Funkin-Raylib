@@ -22,9 +22,9 @@ class VolumeTray extends Object {
     public var muteSound:String = "engine/beep";
     public var unmuteSound:String = "engine/beep";
 
-    public var volumeDownKeys:Array<Int> = [Keys.MINUS];
-    public var volumeUpKeys:Array<Int> = [Keys.EQUAL];
-    public var muteKeys:Array<Int> = [Keys.ZERO];
+    public var volumeDownKeys:Array<Int> = [Keys.MINUS, Keys.NUMPAD_MINUS];
+    public var volumeUpKeys:Array<Int> = [Keys.PLUS, Keys.NUMPAD_PLUS];
+    public var muteKeys:Array<Int> = [Keys.ZERO, Keys.NUMPAD_ZERO];
 
     public var font:Font = Rl.loadFont(Paths.font("nokiafc22.ttf"));
     public var scale:Float = 2;

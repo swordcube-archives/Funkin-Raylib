@@ -1,6 +1,6 @@
 package engine;
 
-import Rl.Keys;
+import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
 import engine.utilities.TimerManager;
@@ -12,6 +12,8 @@ import Rl.Colors;
 
 class Game {
 	public static var assetCache:AssetCache;
+
+	public static var random:Random;
 
 	public static var keys:KeyboardManager;
 	public static var sound:SoundManager;
@@ -25,6 +27,7 @@ class Game {
 
 	public static var framerate:Int = 60;
 	public static var locusLostFramerate:Int = 10;
+	public static var timeScale:Float = 1;
 
 	public static var volumeTray:VolumeTray;
 
@@ -32,6 +35,7 @@ class Game {
 	public static var initialScene:Class<Scene>;
 
 	public static var autoPause:Bool = true;
+	public static var focusLostScreen:Bool = false;
 
 	public static var elapsed(get, never):Float;
 	private static inline function get_elapsed():Float {
@@ -75,7 +79,7 @@ class Game {
         Rl.setTargetFPS(framerate);
 		Rl.initAudioDevice();
 		Rl.setWindowIcon(Rl.loadImage(Paths.image("gameIcon")));
-		Rl.setExitKey(Keys.NULL);
+		Rl.setExitKey(Keys.NONE);
 
 		Game.signals = new SignalManager();
 		Tween.globalManager = new TweenManager();
@@ -83,11 +87,18 @@ class Game {
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
 		Game.assetCache = new AssetCache();
+		
+		Game.random = new Random();
+		Game.random.resetInitialSeed();
 
 		Game.initialScene = initialScene;
 		Game.switchScene(Type.createInstance(initialScene, []));
 
 		start();
+	}
+
+	public static function resetScene() {
+		Game.switchScene(Type.createInstance(Type.getClass(scene), []));
 	}
 
 	public function start() {
@@ -103,7 +114,7 @@ class Game {
 				Rl.setTargetFPS(framerate);
 
 				// Rendering things from the current scene
-				var elapsedTime:Float = Rl.getFrameTime();
+				var elapsedTime:Float = Rl.getFrameTime() * Game.timeScale;
 				if(elapsedTime > maxElapsed)
 					elapsedTime = maxElapsed;
 
@@ -127,11 +138,16 @@ class Game {
 			} else {
 				Rl.setTargetFPS(locusLostFramerate);
 
-				var text:String = "Game is currently unfocused";
-				var fontSize:Int = 24;
+				if(focusLostScreen) {
+					var text:String = "Game is currently unfocused";
+					var fontSize:Int = 24;
 
-				var textShit = Rl.measureTextEx(fpsFont, text, fontSize, 0);
-				Rl.drawTextEx(fpsFont, text, Rl.Vector2.create((Game.width - textShit.x) * 0.5, (Game.height - textShit.y) * 0.5), fontSize, 0, Colors.WHITE);
+					var textShit = Rl.measureTextEx(fpsFont, text, fontSize, 0);
+					Rl.drawTextEx(fpsFont, text, Rl.Vector2.create((Game.width - textShit.x) * 0.5, (Game.height - textShit.y) * 0.5), fontSize, 0, Colors.WHITE);
+				} else {
+					if(Game.scene != null)
+						Game.scene.draw();
+				}
 			}
 
 			// Rendering FPS counter

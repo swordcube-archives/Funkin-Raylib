@@ -1,0 +1,16 @@
+var ogY:Float = 0;
+var sineShit:Float = 0;
+
+function onCreate() {
+    ogY = playerStrums.members[0].y;
+}
+
+function onUpdate(elapsed:Float) {
+    sineShit += elapsed * 2;
+    var i:Int = 0;
+    playerStrums.forEachAlive((receptor:Receptor) -> {
+        receptor.angle += Game.elapsed * 50;
+        receptor.y = ogY + (Math.sin(sineShit + i) * 40);
+        i++;
+    });
+}

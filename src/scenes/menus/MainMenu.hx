@@ -64,16 +64,20 @@ class MainMenu extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        if(Game.keys.justPressed(Keys.UP))
+        if(controls.BACK)
+            Game.switchScene(new TitleScreen());
+
+        if(controls.UI_UP)
             changeSelection(-1);
 
-        if(Game.keys.justPressed(Keys.DOWN))
+        if(controls.UI_DOWN)
             changeSelection(1);
 
-        if(Game.keys.justPressed(Keys.ENTER)) {
+        if(controls.ACCEPT) {
             switch(menuItems[curSelected]) {
                 case "freeplay":
-                    PlayState.SONG = Song.loadChart("ugh", "hard");
+                    Game.timeScale = 1.25;
+                    PlayState.SONG = Song.loadChart("roses", "hard");
                     Game.switchScene(new PlayState());
             }
         }

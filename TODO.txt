@@ -1,0 +1,11 @@
+--- FUNKIN ---
+[BUGS]
+- [FIXED] Angle not working correctly in the Sprite class (this can be seen clearly on the logo in the titlescreen)
+- Negative scale breaking on animated sprites (Fixed on non-animated sprites)
+
+[FEATURES]
+- Note Splashes
+
+--- RAYFLIXEL (codename for framework, has flixel in name bc it's a flixel LIKE 2d framework) ---
+[FEATURES]
+- Object Collision

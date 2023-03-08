@@ -4,7 +4,18 @@ import sys.FileSystem;
 import engine.utilities.Atlas;
 
 class Paths {
-    public inline static function asset(path:String) {
+    public static final scriptExtensions:Array<String> = [
+        "hx",
+        "hxs",
+        "hsc",
+        "hscript"
+    ];
+
+    public static function asset(path:String) {
+        var srcPath:String = '../../assets/$path';
+        if(FileSystem.exists(srcPath))
+            return srcPath;
+
         return './assets/$path';
     }
 
@@ -70,6 +81,16 @@ class Paths {
 
     public inline static function txt(path:String) {
         return asset('$path.txt');
+    }
+
+    public static function script(path:String) {
+        for(ext in scriptExtensions) {
+            var p:String = asset('$path.$ext');
+            if(FileSystem.exists(p))
+                return p;
+        }
+        var p:String = asset('$path.hx');
+        return p;
     }
 
     public inline static function json(path:String) {

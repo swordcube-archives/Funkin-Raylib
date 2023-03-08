@@ -3,11 +3,23 @@ package scenes;
 import funkin.interfaces.IMusicHandler;
 
 class MusicBeatScene extends Scene implements IMusicHandler {
+    public var controls(get, never):Controls;
+    private function get_controls():Controls {
+        return Init.controls;
+    }
+    
     override function create() {
         Conductor.onBeatHit.add(beatHit);
         Conductor.onStepHit.add(stepHit);
         Conductor.onSectionHit.add(sectionHit);
         super.create();
+    }
+
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+        
+        if(Game.keys.justPressed(Keys.F5))
+            Game.resetScene();
     }
 
     /**

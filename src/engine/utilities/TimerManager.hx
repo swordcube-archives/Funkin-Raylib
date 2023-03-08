@@ -10,7 +10,7 @@ class TimerManager {
         });
 
         Game.signals.preSceneCreate.add(() -> {
-            trace("[ENGINE] Clearing timers...");
+            Logs.trace("Clearing timers...", ENGINE);
             for(timer in timers) {
                 timer.kill();
                 timer.stop();

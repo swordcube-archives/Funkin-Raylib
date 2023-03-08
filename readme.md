@@ -6,9 +6,10 @@
  git clone https://github.com/swordcube/Funkin-Raylib.git 
  ``` 
  
- 2. Install the Raylib haxe bindings
+ 2. Install the required libraries
  ``` 
- haxelib git raylib-hx https://github.com/swordcube/raylib-hx
+ haxelib git raylib-hx https://github.com/foreignsasquatch/raylib-hx
+ haxelib git hscript-improved https://github.com/YoshiCrafter29/hscript-improved
  ``` 
  
  3. Go into your terminal and run  

@@ -2,6 +2,7 @@ package funkin.objects.ui;
 
 class Receptor extends Sprite {
     public var initialScale:Float = 0.7;
+    public var scrollSpeed:Null<Float> = null;
     
     public var keyCount:Int = 4;
     public var noteData:Int = 0;

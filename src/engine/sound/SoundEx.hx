@@ -1,5 +1,6 @@
 package engine.sound;
 
+import sys.FileSystem;
 #if !macro
 import engine.Object;
 import Rl.Sound;
@@ -9,6 +10,8 @@ import Rl.Sound;
  * Use `MusicEx` to play longer sounds with the ability to get the time of them.
  */
 class SoundEx extends Object {
+    public var audioLoaded:Bool = false;
+
     private var __sound:Sound;
 
     /**
@@ -16,7 +19,9 @@ class SoundEx extends Object {
      */
     public var volume(default, set):Float;
     private function set_volume(v:Float):Float {
-        Rl.setSoundVolume(__sound, v);
+        if(audioLoaded)
+            Rl.setSoundVolume(__sound, v);
+
         return volume = v;
     }
 
@@ -25,7 +30,9 @@ class SoundEx extends Object {
      */
     public var pitch(default, set):Float;
     private function set_pitch(v:Float):Float {
-        Rl.setSoundPitch(__sound, v);
+        if(audioLoaded)
+            Rl.setSoundPitch(__sound, v);
+
         return pitch = v;
     }
 
@@ -36,7 +43,7 @@ class SoundEx extends Object {
      */
     public var length(get, never):Float;
     private function get_length():Float {
-        return (__sound.frameCount / __sound.stream.sampleRate) * 1000;
+        return (audioLoaded) ? (__sound.frameCount / __sound.stream.sampleRate) * 1000 : 0;
     }
 
     /**
@@ -54,6 +61,10 @@ class SoundEx extends Object {
     public function new(path:String, ?volume:Float = 1) {
         super();
         this.__path = path;
+
+        audioLoaded = FileSystem.exists(path);
+        if(!audioLoaded) return;
+
         __sound = Rl.loadSound(path);
         this.volume = volume;
         this.pitch = 1;
@@ -63,12 +74,15 @@ class SoundEx extends Object {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
+        if(!audioLoaded) return;
+
         if(!Rl.isSoundPlaying(__sound) && loop && playing)
             Rl.playSound(__sound);
     }
 
     public function stop() {
         playing = false;
+        if(!audioLoaded) return this;
         Rl.stopSound(__sound);
         return this;
     }
@@ -76,19 +90,24 @@ class SoundEx extends Object {
 
     public function pause() {
         playing = false;
+        if(!audioLoaded) return this;
         Rl.pauseSound(__sound);
         return this;
     }
 
     public function resume() {
         playing = true;
+        if(!audioLoaded) return this;
         Rl.resumeSound(__sound);
         return this;
     }
 
     override function destroy() {
         playing = false;
-        Rl.unloadSound(__sound);
+        if(audioLoaded)
+            Rl.unloadSound(__sound);
+
+        audioLoaded = false;
         super.destroy();
     }
 }
