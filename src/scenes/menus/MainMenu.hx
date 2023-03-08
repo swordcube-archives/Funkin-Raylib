@@ -73,7 +73,7 @@ class MainMenu extends MusicBeatScene {
         if(Game.keys.justPressed(Keys.ENTER)) {
             switch(menuItems[curSelected]) {
                 case "freeplay":
-                    PlayState.SONG = Song.loadChart("fresh", "hard");
+                    PlayState.SONG = Song.loadChart("ugh", "hard");
                     Game.switchScene(new PlayState());
             }
         }

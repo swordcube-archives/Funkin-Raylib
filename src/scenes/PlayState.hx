@@ -1,5 +1,6 @@
 package scenes;
 
+import Rl.Keys;
 import funkin.objects.ui.NoteField;
 import engine.tweens.Ease;
 import engine.tweens.Tween;
@@ -28,7 +29,7 @@ class PlayState extends MusicBeatScene {
     public var notes:NoteField;
 
     public var unspawnNotes:Array<Note>;
-    public var scrollSpeed:Float = 1;
+    public var scrollSpeed:Float = 2.7;
 
     override function create() {
         super.create();
@@ -53,17 +54,18 @@ class PlayState extends MusicBeatScene {
 
         add(notes = new NoteField());
 
-        var receptorOffset:Float = 80;
+        var strumY:Float = (SettingsAPI.downscroll) ? Game.height - 160 : 50;
+        var receptorOffset:Float = 90;
 
         for(i in 0...SONG.keyCount) {
             // CPU receptor
-            var receptor = new Receptor((Note.swagWidth * i) + receptorOffset, 50, SONG.keyCount, i);
+            var receptor = new Receptor((Note.swagWidth * i) + receptorOffset, strumY, SONG.keyCount, i);
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             cpuStrums.add(receptor);
 
             // Player receptor
-            var receptor = new Receptor((Note.swagWidth * i) + ((Game.width * 0.5) + receptorOffset), 50, SONG.keyCount, i);
+            var receptor = new Receptor((Note.swagWidth * i) + ((Game.width * 0.5) + receptorOffset), strumY, SONG.keyCount, i);
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             playerStrums.add(receptor);
@@ -89,16 +91,65 @@ class PlayState extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
+        Conductor.position += elapsed * 1000;
         if(startingSong) {
-            Conductor.position += elapsed * 1000;
             if(Conductor.position >= 0)
                 startSong();
-        } else // TODO: figure out how to make resync vocals work correctly
-            Conductor.position = inst.time;
+        }
 
         if(unspawnNotes[0] != null) {
             while(unspawnNotes[0] != null && unspawnNotes[0].strumTime <= Conductor.position + (2500 / scrollSpeed))
                 notes.add(unspawnNotes.shift());
+        }
+
+        keyShit();
+    }
+
+    public function keyShit() {
+        var keyBinds:Array<Int> = [
+            Keys.S,
+            Keys.D,
+            Keys.K,
+            Keys.L
+        ];
+
+        for(i => bind in keyBinds) {
+            if(Game.keys.justPressed(bind))
+                playerStrums.members[i].playAnim("pressed", true);
+        }
+
+        var possibleNotes:Array<Note> = [];
+        notes.forEachAlive((note:Note) -> {
+            if(!note.mustPress || !note.canBeHit) return;
+            possibleNotes.push(note);
+        });
+        possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+        var hitBlocked:Array<Bool> = [for(_ in 0...SONG.keyCount) false];
+        for(note in possibleNotes) {
+            if(!Game.keys.justPressed(keyBinds[note.noteData]) || hitBlocked[note.noteData]) continue;
+            hitBlocked[note.noteData] = true;
+            playerStrums.members[note.noteData].playAnim("confirm", true);
+            notes.deleteNote(note);
+        }
+
+        for(i => bind in keyBinds) {
+            if(Game.keys.justReleased(bind))
+                playerStrums.members[i].playAnim("static", true);
+        }
+    }
+
+    override function beatHit(v:Int) {
+        super.beatHit(v);
+
+        if(Math.abs(Conductor.position - inst.time) > 20) {
+            inst.pause();
+            vocals.pause();
+
+            inst.time = vocals.time = Conductor.position;
+
+            inst.play();
+            vocals.play();
         }
     }
 

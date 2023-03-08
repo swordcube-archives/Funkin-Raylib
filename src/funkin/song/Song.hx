@@ -35,6 +35,11 @@ class Song {
             fallbackSong;
         };
 
+		for(section in data.notes) {
+			if(section == null)
+				data.notes.remove(section);
+		}
+
         return data;
     }
 }

@@ -24,6 +24,7 @@ class Note extends Sprite {
     public var keyCount:Int = 4;
     public var noteData:Int = 0;
     public var mustPress:Bool = false;
+    public var canBeHit:Bool = false;
 
     public function new(?x:Float = 0, ?y:Float = 0, ?strumLine:TypedGroup<Receptor>, ?strumTime:Float = 0, ?keyCount:Int = 0, ?noteData:Int = 0, ?mustPress:Bool = false) {
         super(x, y);
@@ -41,5 +42,10 @@ class Note extends Sprite {
 
         scale.set(0.7 * directionData.scaleMult, 0.7 * directionData.scaleMult);
         updateHitbox();
+    }
+
+    override function update(elapsed:Float) {
+        super.update(elapsed);
+        canBeHit = strumTime <= Conductor.position + Conductor.safeZoneOffset;
     }
 }

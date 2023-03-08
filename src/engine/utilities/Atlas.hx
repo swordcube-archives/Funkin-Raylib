@@ -1,5 +1,6 @@
 package engine.utilities;
 
+import engine.utilities.AssetCache.CacheMap;
 import sys.io.File;
 import haxe.xml.Access;
 
@@ -36,17 +37,34 @@ class Atlas {
         var atlas = new Atlas();
 
         #if !macro
-        atlas.texture = Rl.loadTexture(imagePath);
+        var cacheMap:CacheMap = Game.assetCache.cachedAssets.get(IMAGE);
 
-        var xmlData = new Access(Xml.parse(File.getContent(xmlPath).trim()).firstElement());
+        if(cacheMap.exists(imagePath)) 
+            atlas.texture = cacheMap.get(imagePath).asset;
+        else {
+            atlas.texture = Rl.loadTexture(imagePath);
+            Game.assetCache.cache(IMAGE, imagePath, atlas.texture);
+        }
+
+        var rawXml:Xml = null;
+        var cacheMap:CacheMap = Game.assetCache.cachedAssets.get(XML);
+
+        if(cacheMap.exists(xmlPath)) 
+            rawXml = cacheMap.get(xmlPath).asset;
+        else {
+            rawXml = Xml.parse(File.getContent(xmlPath).trim());
+            Game.assetCache.cache(XML, xmlPath, rawXml);
+        }
+
+        var xmlData = new Access(rawXml.firstElement());
         
 		for (frame in xmlData.nodes.SubTexture) {
             atlas.frames.push({
                 name: frame.att.name,
                 x: Std.parseInt(frame.att.x),
                 y: Std.parseInt(frame.att.y),
-                width: frame.has.frameWidth ? Std.parseInt(frame.att.frameWidth) : Std.parseInt(frame.att.width),
-                height: frame.has.frameHeight ? Std.parseInt(frame.att.frameHeight) : Std.parseInt(frame.att.height),
+                width: Std.parseInt(frame.att.width),
+                height: Std.parseInt(frame.att.height),
                 frameX: frame.has.frameX ? Std.parseInt(frame.att.frameX) : 0,
                 frameY: frame.has.frameY ? Std.parseInt(frame.att.frameY) : 0,
             });

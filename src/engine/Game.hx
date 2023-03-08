@@ -11,6 +11,8 @@ import engine.Scene;
 import Rl.Colors;
 
 class Game {
+	public static var assetCache:AssetCache;
+
 	public static var keys:KeyboardManager;
 	public static var sound:SoundManager;
 	public static var signals:SignalManager;
@@ -80,6 +82,7 @@ class Game {
 		Game.keys = new KeyboardManager();
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
+		Game.assetCache = new AssetCache();
 
 		Game.initialScene = initialScene;
 		Game.switchScene(Type.createInstance(initialScene, []));

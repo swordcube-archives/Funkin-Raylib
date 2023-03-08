@@ -1,5 +1,6 @@
 package engine;
 
+import engine.utilities.AssetCache.CacheMap;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
 import engine.utilities.AnimationController;
@@ -15,10 +16,6 @@ import Rl.Rectangle;
 class Sprite extends Object {
     public var frames(default, set):Atlas;
     private function set_frames(atlas:Atlas) {
-        if(texture != null) {
-            Rl.unloadTexture(texture);
-            texture = null;
-        }
         texture = atlas.texture;
         frameWidth = atlas.frames[0].width;
         frameHeight = atlas.frames[0].height;
@@ -92,10 +89,6 @@ class Sprite extends Object {
             return this;
         }
         else {
-            if(this.texture != null) {
-                Rl.unloadTexture(this.texture);
-                this.texture = null;
-            }
             this.texture = texture;
             frameWidth = texture.width;
             frameHeight = texture.height;
@@ -111,7 +104,16 @@ class Sprite extends Object {
     }
 
     public function loadGraphic(path:String, ?width:Int = 0, ?height:Int = 0) {
-        return loadGraphicFromTexture(Rl.loadTexture(path), width, height);
+        var cacheMap:CacheMap = Game.assetCache.cachedAssets.get(IMAGE);
+        var texture:Texture2D = null;
+
+        if(cacheMap.exists(path)) 
+            texture = cacheMap.get(path).asset;
+        else {
+            texture = Rl.loadTexture(path);
+            Game.assetCache.cache(IMAGE, path, texture);
+        }
+        return loadGraphicFromTexture(texture, width, height);
     }
 
 	/**
@@ -248,7 +250,6 @@ class Sprite extends Object {
     }
 
     override function destroy() {
-        Rl.unloadTexture(texture);
         texture = null;
         offset = null;
         animation.destroy();

@@ -10,10 +10,11 @@ class NoteField extends TypedGroup<Note> {
         super.update(elapsed);
         forEachAlive((note:Note) -> {
             note.x = note.strumLine.members[note.noteData].x;
-            note.y = note.strumLine.members[note.noteData].y - (0.45 * (Conductor.position - note.strumTime) * game.scrollSpeed);
+            note.y = note.strumLine.members[note.noteData].y - ((0.45 * (SettingsAPI.downscroll ? -1 : 1)) * (Conductor.position - note.strumTime) * game.scrollSpeed);
 
             if(note.mustPress) {
-                // idk yet man
+                if(note.strumTime <= Conductor.position - (Conductor.safeZoneOffset + 50))
+                    deleteNote(note);
             } else {
                 if(note.strumTime <= Conductor.position)
                     deleteNote(note);
