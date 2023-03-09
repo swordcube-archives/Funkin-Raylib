@@ -4,6 +4,7 @@ import engine.utilities.AssetCache.CacheMap;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
 import engine.utilities.AnimationController;
+import engine.graphics.FileShader;
 import engine.math.Point2D;
 #if !macro
 import Rl.Image;
@@ -38,6 +39,12 @@ class Sprite extends Object {
      * Unused if `frames` isn't `null`.
 	 */
 	public var texture:Texture2D;
+
+	/**
+	* A custom shader for the sprite.
+	* Set to `null` to use the default shader.
+	*/
+	public var shader:FileShader = null;
 
 	/**
 	 * How small or big the sprite is.
@@ -269,8 +276,9 @@ class Sprite extends Object {
 		super.draw();
 		angle %= 360;
 
-		if(flipX) scale.x *= -1;
-		if(flipY) scale.y *= -1;
+		if (flipX) scale.x *= -1;
+		if (flipY) scale.y *= -1;
+		if (shader != null) Rl.beginShaderMode(shader.actualShader);
 
 		var x:Float = (position.x + offset.x);
 		var y:Float = (position.y + offset.y);
@@ -307,9 +315,14 @@ class Sprite extends Object {
 
 				var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
 				var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
-				var testCoords = [
-					(-frameData.frameX * Math.abs(scale.x)) * cos + (-frameData.frameY * Math.abs(scale.y)) * sin,
-					(-frameData.frameX * Math.abs(scale.x)) * -sin + (-frameData.frameY * Math.abs(scale.y)) * cos
+				var increments = [0.0, 0.0];
+				if (scale.y < 0) {
+					increments[0] = sin * -1;
+					increments[1] = cos * -1;
+				}
+				var frameOffsetCoords = [
+					(-frameData.frameX * Math.abs(scale.x)) * cos + (-frameData.frameY * Math.abs(scale.y)) * (sin + increments[0]),
+					(-frameData.frameX * Math.abs(scale.x)) * -sin + (-frameData.frameY * Math.abs(scale.y)) * (cos + increments[1])
 				];
 				Rl.drawTexturePro(texture, // the texture (woah)
 					Rl.Rectangle.create(
@@ -319,8 +332,8 @@ class Sprite extends Object {
 						frameData.height * (scale.y < 0 ? -1 : 1)
                     ), // the coordinates of x, y, width, and height FROM the image
 					Rl.Rectangle.create(
-                        (x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
-						(y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight))), 
+                        (x + frameOffsetCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
+						(y + frameOffsetCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight))), 
                         frameData.width * Math.abs(scale.x),
 						frameData.height * Math.abs(scale.y)
                     ), // where we want to display it on screen + how big it should be
@@ -349,11 +362,16 @@ class Sprite extends Object {
             );
 		}
 
-		if(flipX) scale.x *= -1;
-		if(flipY) scale.y *= -1;
+		if (flipX) scale.x *= -1;
+		if (flipY) scale.y *= -1;
+		if (shader != null) Rl.endShaderMode();
 	}
 
 	override function destroy() {
+		if (shader != null) {
+			shader.destroy();
+			shader = null;
+		}
 		texture = null;
 		offset = null;
 		animation.destroy();

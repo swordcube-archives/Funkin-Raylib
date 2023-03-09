@@ -109,6 +109,8 @@ class Object extends Basic {
 	 */
 	@:noCompletion
 	function updateMotion(elapsed:Float):Void {
+		if (position == null) return;
+
 		var velocityDelta = 0.5 * (VelocityUtil.computeVelocity(angularVelocity, angularAcceleration, angularDrag, maxAngular, elapsed) - angularVelocity);
 		angularVelocity += velocityDelta;
 		angle += angularVelocity * elapsed;
