@@ -30,10 +30,11 @@ enum abstract ScaleMode(Int) to Int from Int {
 
 class Game {
 	public static var scaleMode:ScaleMode = FIXED;
-
 	public static var assetCache:AssetCache;
 
 	public static var random:Random;
+
+	public static var cameras:CameraManager;
 
 	public static var keys:KeyboardManager;
 	public static var sound:SoundManager;
@@ -57,6 +58,8 @@ class Game {
 	public static var autoPause:Bool = true;
 	public static var focusLostScreen:Bool = false;
 
+	public static var camera:Camera;
+
 	public static var elapsed(get, never):Float;
 	private static inline function get_elapsed():Float {
 		var elapsedTime:Float = Rl.getFrameTime();
@@ -79,7 +82,12 @@ class Game {
 		if(scene != null)
 			scene.destroy();
 
+		if(Game.camera != null)
+			Game.camera.destroy();
+
 		signals.sceneDestroy.dispatch();
+
+		Game.camera = new Camera();
 
 		scene = nextScene;
 		if(scene != null) scene.create();
@@ -107,6 +115,7 @@ class Game {
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
 		Game.assetCache = new AssetCache();
+		Game.cameras = new CameraManager();
 		
 		Game.random = new Random();
 		Game.random.resetInitialSeed();

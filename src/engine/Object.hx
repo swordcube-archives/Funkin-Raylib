@@ -1,10 +1,30 @@
 package engine;
 
 class Object extends Basic {
+	private var __camera:Camera;
+
+	public var camera(get, set):Camera;
+
+	private function get_camera():Camera {
+		if(__camera != null)
+			return __camera;
+
+		return Game.camera;
+	}
+
+	private function set_camera(v:Camera):Camera {
+		return __camera = v;
+	}
+	
 	/**
 	 * Whether or not this object is movable.
 	 */
 	public var immovable:Bool = false;
+
+	/**
+	 * Whether or not this object gets affected by velocity.
+	 */
+	public var moves:Bool = true;
 
 	/**
 	 * The X and Y position of the object.
@@ -109,6 +129,8 @@ class Object extends Basic {
 	 */
 	@:noCompletion
 	function updateMotion(elapsed:Float):Void {
+		if(position == null || !moves) return;
+		
 		var velocityDelta = 0.5 * (VelocityUtil.computeVelocity(angularVelocity, angularAcceleration, angularDrag, maxAngular, elapsed) - angularVelocity);
 		angularVelocity += velocityDelta;
 		angle += angularVelocity * elapsed;

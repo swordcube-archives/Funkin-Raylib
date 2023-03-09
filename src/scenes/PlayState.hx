@@ -29,6 +29,8 @@ class PlayState extends MusicBeatScene {
     public var playerStrums:TypedGroup<Receptor>;
     public var notes:NoteField;
 
+    public var camHUD:Camera;
+
     public var unspawnNotes:Array<Note>;
     public var scrollSpeed:Float = 2.7;
 
@@ -56,6 +58,8 @@ class PlayState extends MusicBeatScene {
 
         Game.sound.list.push(vocals = new MusicEx(Paths.songVoices(SONG.song), 1, false));
         vocals.pitch = Game.timeScale;
+
+        Game.cameras.add(camHUD = new Camera());
 
         add(cpuStrums = new TypedGroup<Receptor>());
         add(playerStrums = new TypedGroup<Receptor>());
@@ -88,6 +92,9 @@ class PlayState extends MusicBeatScene {
         unspawnNotes = ChartParser.parseNotes(SONG);
         scriptTest.call("onCreate");
 
+        Game.camera.zoom = 0.5;
+        Game.camera.angle = 0;
+
         startCountdown();
     }
 
@@ -105,6 +112,8 @@ class PlayState extends MusicBeatScene {
 
     override function update(elapsed:Float) {
         super.update(elapsed);
+
+        Game.camera.angle += elapsed * 5;
 
         if(!endingSong) {
             Conductor.position += elapsed * 1000;
@@ -143,6 +152,7 @@ class PlayState extends MusicBeatScene {
                 ratingSpr.acceleration.y = 550;
                 ratingSpr.velocity.y = -Game.random.int(140, 175);
                 ratingSpr.velocity.x = -Game.random.int(0, 10);
+                ratingSpr.camera = camHUD;
                 add(ratingSpr);
 
                 Tween.tween(ratingSpr, {alpha: 0}, 0.2, {

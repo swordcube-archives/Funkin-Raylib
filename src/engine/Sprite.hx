@@ -277,9 +277,11 @@ class Sprite extends Object {
 
 		color.a = Std.int(alpha * 255);
 
+		@:privateAccess
+		Rl.beginMode2D(camera.__rlCamera);
+
 		if (frames != null) {
 			var texture:Texture2D = frames.texture;
-			var oldSize = new Point2D(texture.width, texture.height);
 
             // TODO: fix all of this to work with negative scales correctly
             // (it should just display the sprite but flipped on x and/or y axis)
@@ -311,6 +313,12 @@ class Sprite extends Object {
 					(-frameData.frameX * Math.abs(scale.x)) * cos + (-frameData.frameY * Math.abs(scale.y)) * sin,
 					(-frameData.frameX * Math.abs(scale.x)) * -sin + (-frameData.frameY * Math.abs(scale.y)) * cos
 				];
+
+				var adjustedPos = Rl.getWorldToScreen2D(Rl.Vector2.create(
+					(x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))), 
+					(y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
+				), camera.__rlCamera);
+
 				Rl.drawTexturePro(texture, // the texture (woah)
 					Rl.Rectangle.create(
                         frameData.x, 
@@ -319,10 +327,10 @@ class Sprite extends Object {
 						frameData.height * (scale.y < 0 ? -1 : 1)
                     ), // the coordinates of x, y, width, and height FROM the image
 					Rl.Rectangle.create(
-                        (x + testCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
-						(y + testCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight))), 
-                        frameData.width * Math.abs(scale.x),
-						frameData.height * Math.abs(scale.y)
+                        adjustedPos.x,
+						adjustedPos.y, 
+                        frameData.width * Math.abs(scale.x) * Math.abs(camera.zoom),
+						frameData.height * Math.abs(scale.y) * Math.abs(camera.zoom)
                     ), // where we want to display it on screen + how big it should be
 					Rl.Vector2.create(origin.x, origin.y), // origin shit
 					angle, // rotation
@@ -333,16 +341,22 @@ class Sprite extends Object {
 					animation.curAnim.__frames.reverse();
 			}
 		} else {
+			@:privateAccess
+			var adjustedPos = Rl.getWorldToScreen2D(Rl.Vector2.create(
+				x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
+				y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
+			), camera.__rlCamera);
+
 			texture.width = Std.int(frameWidth * scale.x);
 			texture.height = Std.int(frameHeight * scale.y);
 			Rl.drawTexturePro(
                 texture, 
                 Rl.Rectangle.create(0, 0, MathUtil.absInt(texture.width), MathUtil.absInt(texture.height)),
 				Rl.Rectangle.create(
-                    x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
-					y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight))), 
-                    MathUtil.absInt(texture.width), 
-                    MathUtil.absInt(texture.height)
+                    adjustedPos.x,
+					adjustedPos.y, 
+                    MathUtil.absInt(texture.width) * Math.abs(camera.zoom), 
+                    MathUtil.absInt(texture.height) * Math.abs(camera.zoom)
                 ),
 				Rl.Vector2.create(origin.x, origin.y), 
                 angle, color
@@ -351,6 +365,8 @@ class Sprite extends Object {
 
 		if(flipX) scale.x *= -1;
 		if(flipY) scale.y *= -1;
+
+		Rl.endMode2D();
 	}
 
 	override function destroy() {
