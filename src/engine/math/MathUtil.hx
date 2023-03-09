@@ -2,13 +2,17 @@ package engine.math;
 
 #if !macro
 import engine.Sprite;
+import Rl.Rectangle;
+import Rl.Vector2;
 #else
 typedef Sprite = Dynamic;
+typedef Rectangle = Dynamic;
+typedef Vector2 = Dynamic;
 #end
 
 /**
  * `FlxMath` but partially ported to this shitty raylib engine.
- * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/math/FlxMath.hx
+ * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/math/FlxMath.heightx
  */
 class MathUtil {
 	/**
@@ -421,5 +425,41 @@ class MathUtil {
 	 */
 	public static function multMatrices(vec:Array<Float>, mat:Array<Array<Float>>) {
 		return [vec[0] * mat[0][0] + vec[0] * mat[0][1], vec[1] * mat[1][0] + vec[1] * mat[1][1]];
+	}
+
+	/**
+	 * Returns a properly letter boxed rectangle.
+	 * @param contentSize 
+	 * @param container 
+	 * @author @colleen05
+	 */
+	public static function letterBoxRectangle(contentSize:Vector2, container:Rectangle) {
+		#if !macro
+		// Calculate aspect ratios.
+		var innerAspect:Float = contentSize.x / contentSize.y;
+		var containerAspect:Float = container.width / container.height;
+
+		// Calculate "box" (the new rectangle)'s dimensions.
+		var boxWidth:Float = (containerAspect > innerAspect) ? // Container proportionally wider than inner?
+			(container.height * innerAspect) : // Only take up a portion of the width.
+			(container.width); // Otherwise, take up the entire width.
+
+		var boxHeight:Float = (containerAspect < innerAspect) ? // Container proportionally taller than inner?
+			(container.width / innerAspect) : // Only take up a portion of the height.
+			(container.height); // Otherwise, take up the entire height.
+
+		// Create the new rectangle, positioned properly inside the container.
+		var box = Rectangle.create(
+			container.x + (container.width - boxWidth) / 2.0, // Centered horizontally.
+			container.y + (container.height - boxHeight) / 2.0, // Centered vertically.
+			boxWidth,
+			boxHeight // (We already know the box dimensions!)
+		);
+
+		// Return the new rectangle.
+		return box;
+		#else
+		return null;
+		#end
 	}
 }

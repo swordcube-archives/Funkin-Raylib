@@ -1,5 +1,8 @@
 package engine;
 
+import Rl.Texture2D;
+import Rl.Font;
+import Rl.RenderTexture2D;
 import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
@@ -10,10 +13,28 @@ import engine.keyboard.KeyboardManager;
 import engine.Scene;
 import Rl.Colors;
 
+enum abstract ScaleMode(Int) to Int from Int {
+	/**
+	 * Maintains the game's scene at a fixed size. 
+	 * This will clip off the edges of the scene for dimensions which are too small, 
+	 * and leave black margins on the sides for dimensions which are too large.
+	 */
+	var FIXED = 0;
+
+	/**
+	 * Stretches and squashes the game to exactly fit the provided window. 
+	 * This may result in the graphics of your game being distorted if the user resizes their game window.
+	 */
+	var FILL = 1;
+}
+
 class Game {
+	public static var scaleMode:ScaleMode = FIXED;
 	public static var assetCache:AssetCache;
 
 	public static var random:Random;
+
+	public static var cameras:CameraManager;
 
 	public static var keys:KeyboardManager;
 	public static var sound:SoundManager;
@@ -37,6 +58,8 @@ class Game {
 	public static var autoPause:Bool = true;
 	public static var focusLostScreen:Bool = false;
 
+	public static var camera:Camera;
+
 	public static var elapsed(get, never):Float;
 	private static inline function get_elapsed():Float {
 		var elapsedTime:Float = Rl.getFrameTime();
@@ -59,7 +82,12 @@ class Game {
 		if(scene != null)
 			scene.destroy();
 
+		if(Game.camera != null)
+			Game.camera.destroy();
+
 		signals.sceneDestroy.dispatch();
+
+		Game.camera = new Camera();
 
 		scene = nextScene;
 		if(scene != null) scene.create();
@@ -87,6 +115,7 @@ class Game {
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
 		Game.assetCache = new AssetCache();
+		Game.cameras = new CameraManager();
 		
 		Game.random = new Random();
 		Game.random.resetInitialSeed();
@@ -104,10 +133,29 @@ class Game {
 	public function start() {
 		Game.volumeTray = new VolumeTray();
 
-		var fpsFont = Rl.loadFont(Paths.font("vcr.ttf"));
+		var fpsFont:Font = Rl.loadFont(Paths.font("vcr.ttf"));
+		var renderTex:RenderTexture2D = Rl.loadRenderTexture(Game.width, Game.height);
 
 		while (!Rl.windowShouldClose()) {
+			// NOTE TO SELF: render textures are stupid
+			// and have to be casted to be used
+			// otherwise c++ compiler errors happen :3
+			var bullShit = cast(renderTex.texture, Texture2D);
+
 			Rl.beginDrawing();
+
+			switch(Game.scaleMode) {
+				case FILL:
+					bullShit.width = Rl.getScreenWidth();
+					bullShit.height = Rl.getScreenHeight();
+
+				default:
+					bullShit.width = Game.width;
+					bullShit.height = Game.height;
+			}
+
+			Rl.clearBackground(Colors.BLACK);
+			Rl.beginTextureMode(renderTex);
 			Rl.clearBackground(Colors.BLACK);
 
 			if(!(!Rl.isWindowFocused() && autoPause)) {
@@ -149,6 +197,27 @@ class Game {
 						Game.scene.draw();
 				}
 			}
+
+			Rl.endTextureMode();
+
+			var destRect = MathUtil.letterBoxRectangle( 
+				Rl.Vector2.create(bullShit.width, bullShit.height),
+				Rl.Rectangle.create(0.0, 0.0, Rl.getScreenWidth(), Rl.getScreenHeight())
+			);
+
+			Rl.drawTexturePro(
+				bullShit,
+				Rl.Rectangle.create(
+					0.0,
+					bullShit.height,
+					bullShit.width,
+					-bullShit.height
+				),
+				destRect,
+				Rl.Vector2.zero(),
+				0.0,
+				Colors.WHITE
+			);
 
 			// Rendering FPS counter
 			Rl.drawTextEx(fpsFont, Rl.getFPS()+" FPS", Rl.Vector2.create(10, 3), 16, 0, Rl.Colors.WHITE);

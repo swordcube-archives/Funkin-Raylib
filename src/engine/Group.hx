@@ -30,9 +30,19 @@ class TypedGroup<T:Object> extends Object {
     }
 
     override function draw() {
-        for(member in members) {
-            if(member == null || !member.alive) continue;
-            member.draw();
+        var cameraList = Game.cameras.list.copy();
+        cameraList.insert(0, Game.camera);
+
+        for(camera in cameraList) { 
+            @:privateAccess
+            Rl.beginMode2D(camera.__rlCamera);
+
+            for(member in members) {
+                if(member == null || !member.alive || member.camera != camera) continue;
+                member.draw();
+            }
+
+            Rl.endMode2D();
         }
     }
 

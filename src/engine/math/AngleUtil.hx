@@ -78,7 +78,6 @@ class AngleUtil {
 	}
 
 	/**
-	 * Converts a Degrees value into a Radian
 	 * Converts the degrees value into radians and returns
 	 *
 	 * @param 	degrees The value in degrees

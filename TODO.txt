@@ -6,8 +6,10 @@
 [FEATURES]
 - Note Splashes
 
---- RAYFLIXEL (codename for framework, has flixel in name bc it's a flixel LIKE 2d framework) ---
+--- DROPLET ---
 [BUGS]
 - Negative Scale (Mostly works, animated sprites are a little broken in terms of positioning)
+- Camera Angles work very strangely (Might be a Raylib issue, idk, camera zooms are fine)
+
 [FEATURES]
 - Object Collision

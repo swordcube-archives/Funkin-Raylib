@@ -76,7 +76,7 @@ class MainMenu extends MusicBeatScene {
         if(controls.ACCEPT) {
             switch(menuItems[curSelected]) {
                 case "freeplay":
-                    Game.timeScale = 1.5;
+                    Game.timeScale = 1;
                     PlayState.SONG = Song.loadChart("roses", "hard");
                     Game.switchScene(new PlayState());
             }
