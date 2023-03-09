@@ -136,13 +136,13 @@ class Game {
 			Rl.beginDrawing();
 
 			switch(Game.scaleMode) {
-				case FIXED:
-					bullShit.width = Game.width;
-					bullShit.height = Game.height;
-
 				case FILL:
 					bullShit.width = Rl.getScreenWidth();
 					bullShit.height = Rl.getScreenHeight();
+
+				default:
+					bullShit.width = Game.width;
+					bullShit.height = Game.height;
 			}
 
 			Rl.clearBackground(Colors.BLACK);
