@@ -33,6 +33,8 @@ class NoteField extends TypedGroup<Note> {
 					note.y -= Note.swagWidth * 0.5;
 				else
 					note.y += Note.swagWidth * 0.5;
+
+                note.flipY = (downscrollMultiplier < 0);
 			}
 
             // this dumb but it works
