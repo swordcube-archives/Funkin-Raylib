@@ -1,5 +1,8 @@
 package engine;
 
+import Rl.Texture2D;
+import Rl.Font;
+import Rl.RenderTexture2D;
 import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
@@ -104,10 +107,14 @@ class Game {
 	public function start() {
 		Game.volumeTray = new VolumeTray();
 
-		var fpsFont = Rl.loadFont(Paths.font("vcr.ttf"));
+		var fpsFont:Font = Rl.loadFont(Paths.font("vcr.ttf"));
+		var renderTex:RenderTexture2D = Rl.loadRenderTexture(Game.width, Game.height);
 
 		while (!Rl.windowShouldClose()) {
 			Rl.beginDrawing();
+
+			Rl.clearBackground(Colors.BLACK);
+			Rl.beginTextureMode(renderTex);
 			Rl.clearBackground(Colors.BLACK);
 
 			if(!(!Rl.isWindowFocused() && autoPause)) {
@@ -149,6 +156,32 @@ class Game {
 						Game.scene.draw();
 				}
 			}
+
+			Rl.endTextureMode();
+
+			// NOTE TO SELF: if random c++ compiler errors
+			// try doing this shit, it's stupid but works for some reason
+			// hxcpp is amazing
+
+			var bullShit = cast(renderTex.texture, Texture2D); 
+			var destRect = MathUtil.letterBoxRectangle( 
+				Rl.Vector2.create(bullShit.width, bullShit.height),
+				Rl.Rectangle.create(0.0, 0.0, Rl.getScreenWidth(), Rl.getScreenHeight())
+			);
+
+			Rl.drawTexturePro(
+				bullShit,
+				Rl.Rectangle.create(
+					0.0,
+					bullShit.height,
+					bullShit.width,
+					-bullShit.height
+				),
+				destRect,
+				Rl.Vector2.zero(),
+				0.0,
+				Colors.WHITE
+			);
 
 			// Rendering FPS counter
 			Rl.drawTextEx(fpsFont, Rl.getFPS()+" FPS", Rl.Vector2.create(10, 3), 16, 0, Rl.Colors.WHITE);
