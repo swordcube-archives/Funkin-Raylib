@@ -277,9 +277,6 @@ class Sprite extends Object {
 
 		color.a = Std.int(alpha * 255);
 
-		@:privateAccess
-		Rl.beginMode2D(camera.__rlCamera);
-
 		if (frames != null) {
 			var texture:Texture2D = frames.texture;
 
@@ -359,14 +356,13 @@ class Sprite extends Object {
                     MathUtil.absInt(texture.height) * Math.abs(camera.zoom)
                 ),
 				Rl.Vector2.create(origin.x, origin.y), 
-                angle, color
+                angle, 
+				color
             );
 		}
 
 		if(flipX) scale.x *= -1;
 		if(flipY) scale.y *= -1;
-
-		Rl.endMode2D();
 	}
 
 	override function destroy() {

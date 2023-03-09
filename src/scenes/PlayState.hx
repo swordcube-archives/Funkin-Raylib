@@ -31,7 +31,7 @@ class PlayState extends MusicBeatScene {
 
     public var camHUD:Camera;
 
-    public var unspawnNotes:Array<Note>;
+    public var unspawnNotes:Array<Note> = [];
     public var scrollSpeed:Float = 2.7;
 
     public var scriptTest:HScript;
@@ -92,7 +92,7 @@ class PlayState extends MusicBeatScene {
         unspawnNotes = ChartParser.parseNotes(SONG);
         scriptTest.call("onCreate");
 
-        Game.camera.zoom = 0.5;
+        Game.camera.zoom = 0.75;
         Game.camera.angle = 0;
 
         startCountdown();

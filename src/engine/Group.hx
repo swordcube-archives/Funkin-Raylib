@@ -33,11 +33,16 @@ class TypedGroup<T:Object> extends Object {
         var cameraList = Game.cameras.list.copy();
         cameraList.insert(0, Game.camera);
 
-        for(camera in cameraList) {
+        for(camera in cameraList) { 
+            @:privateAccess
+            Rl.beginMode2D(camera.__rlCamera);
+
             for(member in members) {
                 if(member == null || !member.alive || member.camera != camera) continue;
                 member.draw();
             }
+
+            Rl.endMode2D();
         }
     }
 
