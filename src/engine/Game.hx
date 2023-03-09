@@ -13,7 +13,24 @@ import engine.keyboard.KeyboardManager;
 import engine.Scene;
 import Rl.Colors;
 
+enum abstract ScaleMode(Int) to Int from Int {
+	/**
+	 * Maintains the game's scene at a fixed size. 
+	 * This will clip off the edges of the scene for dimensions which are too small, 
+	 * and leave black margins on the sides for dimensions which are too large.
+	 */
+	var FIXED = 0;
+
+	/**
+	 * Stretches and squashes the game to exactly fit the provided window. 
+	 * This may result in the graphics of your game being distorted if the user resizes their game window.
+	 */
+	var FILL = 1;
+}
+
 class Game {
+	public static var scaleMode:ScaleMode = FIXED;
+
 	public static var assetCache:AssetCache;
 
 	public static var random:Random;
@@ -111,7 +128,22 @@ class Game {
 		var renderTex:RenderTexture2D = Rl.loadRenderTexture(Game.width, Game.height);
 
 		while (!Rl.windowShouldClose()) {
+			// NOTE TO SELF: render textures are stupid
+			// and have to be casted to be used
+			// otherwise c++ compiler errors happen :3
+			var bullShit = cast(renderTex.texture, Texture2D);
+
 			Rl.beginDrawing();
+
+			switch(Game.scaleMode) {
+				case FIXED:
+					bullShit.width = Game.width;
+					bullShit.height = Game.height;
+
+				case FILL:
+					bullShit.width = Rl.getScreenWidth();
+					bullShit.height = Rl.getScreenHeight();
+			}
 
 			Rl.clearBackground(Colors.BLACK);
 			Rl.beginTextureMode(renderTex);
@@ -159,11 +191,6 @@ class Game {
 
 			Rl.endTextureMode();
 
-			// NOTE TO SELF: if random c++ compiler errors
-			// try doing this shit, it's stupid but works for some reason
-			// hxcpp is amazing
-
-			var bullShit = cast(renderTex.texture, Texture2D); 
 			var destRect = MathUtil.letterBoxRectangle( 
 				Rl.Vector2.create(bullShit.width, bullShit.height),
 				Rl.Rectangle.create(0.0, 0.0, Rl.getScreenWidth(), Rl.getScreenHeight())
