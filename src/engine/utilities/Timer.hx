@@ -1,5 +1,7 @@
 package engine.utilities;
 
+import engine.managers.TimerManager;
+
 class Timer extends Object {
     public var finishCallback:Timer->Void;
 

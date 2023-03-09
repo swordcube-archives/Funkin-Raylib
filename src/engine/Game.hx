@@ -1,13 +1,14 @@
 package engine;
 
+import engine.managers.CameraManager;
 import Rl.Texture2D;
 import Rl.Font;
 import Rl.RenderTexture2D;
 import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
-import engine.utilities.TimerManager;
-import engine.utilities.SignalManager;
+import engine.managers.TimerManager;
+import engine.managers.SignalManager;
 import engine.sound.SoundManager;
 import engine.keyboard.KeyboardManager;
 import engine.Scene;

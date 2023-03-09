@@ -1,4 +1,4 @@
-package engine.utilities;
+package engine.managers;
 
 import engine.Object;
 import engine.utilities.Atlas.FrameData;

@@ -3,7 +3,7 @@ package engine;
 import engine.utilities.AssetCache.CacheMap;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
-import engine.utilities.AnimationController;
+import engine.managers.AnimationController;
 import engine.math.Point2D;
 #if !macro
 import Rl.Image;
@@ -330,7 +330,7 @@ class Sprite extends Object {
 						frameData.height * Math.abs(scale.y) * Math.abs(camera.zoom)
                     ), // where we want to display it on screen + how big it should be
 					Rl.Vector2.create(origin.x, origin.y), // origin shit
-					angle, // rotation
+					angle + camera.angle % 360, // rotation
 					color // tint
 				);
 
@@ -356,7 +356,7 @@ class Sprite extends Object {
                     MathUtil.absInt(texture.height) * Math.abs(camera.zoom)
                 ),
 				Rl.Vector2.create(origin.x, origin.y), 
-                angle, 
+                angle + camera.angle % 360, 
 				color
             );
 		}

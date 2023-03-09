@@ -1,4 +1,4 @@
-package engine.utilities;
+package engine.managers;
 
 import engine.utilities.Signal.TypedSignal;
 

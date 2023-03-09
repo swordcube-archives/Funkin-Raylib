@@ -6,6 +6,7 @@
 # Libraries (MAKE SURE TO KEEP THIS IN SYNC WITH ALL BUILD FILES)
 --library raylib-hx
 --library hscript-improved
+--library hxcpp-debug-server
 
 # Defines (MAKE SURE TO KEEP THIS IN SYNC WITH ALL BUILD FILES)
 --define hscriptPos
