@@ -106,10 +106,10 @@ class PlayState extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        scriptTest.call("onUpdate", [elapsed]);
-
-        if(!endingSong)
+        if(!endingSong) {
             Conductor.position += elapsed * 1000;
+            scriptTest.call("onUpdate", [elapsed]);
+        }
 
         if(startingSong) {
             if(Conductor.position >= 0)
@@ -218,9 +218,7 @@ class PlayState extends MusicBeatScene {
     }
 
     override function destroy() {
-        for(object in [inst, vocals])
-            object.destroy();
-
+        scriptTest.destroy();
         super.destroy();
     }
 }

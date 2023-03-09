@@ -55,7 +55,6 @@ class MainMenu extends MusicBeatScene {
 
         grpButtons.forEach((button:Sprite) -> {
             button.animation.play((curSelected == button.ID) ? "selected" : "idle");
-            button.updateHitbox();
             button.screenCenter(X);
         });
 
@@ -77,7 +76,7 @@ class MainMenu extends MusicBeatScene {
         if(controls.ACCEPT) {
             switch(menuItems[curSelected]) {
                 case "freeplay":
-                    Game.timeScale = 1.25;
+                    Game.timeScale = 1.5;
                     PlayState.SONG = Song.loadChart("roses", "hard");
                     Game.switchScene(new PlayState());
             }
