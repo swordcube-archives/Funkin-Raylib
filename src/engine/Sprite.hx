@@ -269,6 +269,9 @@ class Sprite extends Object {
 		super.draw();
 		angle %= 360;
 
+		if(flipX) scale.x *= -1;
+		if(flipY) scale.y *= -1;
+
 		var x:Float = (position.x + offset.x);
 		var y:Float = (position.y + offset.y);
 
@@ -345,6 +348,9 @@ class Sprite extends Object {
                 angle, color
             );
 		}
+
+		if(flipX) scale.x *= -1;
+		if(flipY) scale.y *= -1;
 	}
 
 	override function destroy() {
