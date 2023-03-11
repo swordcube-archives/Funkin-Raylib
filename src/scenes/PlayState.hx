@@ -30,11 +30,12 @@ class PlayState extends MusicBeatScene {
     public var notes:NoteField;
 
     public var camHUD:Camera;
+    var camFollow:Object;
 
     public var unspawnNotes:Array<Note> = [];
     public var scrollSpeed:Float = 2.7;
 
-    public var scriptTest:HScript;
+    public var scripts:Array<HScript> = [];
 
     override function create() {
         super.create();
@@ -49,8 +50,12 @@ class PlayState extends MusicBeatScene {
         if(SONG.keyCount == null)
             SONG.keyCount = 4;
 
-        scriptTest = new HScript(Paths.script("data/scripts/testing"));
-        scriptTest.setParent(this);
+        scripts.push(new HScript(Paths.script('data/stages/${SONG.stage}')));
+        scripts.push(new HScript(Paths.script("data/scripts/testing")));
+        for (script in scripts) {
+            script.setParent(this);
+            script.call("onCreate");
+        }
 
         Game.sound.list.push(inst = new MusicEx(Paths.songInst(SONG.song), 1, false));
         inst.onComplete = endSong;
@@ -72,12 +77,18 @@ class PlayState extends MusicBeatScene {
         for(i in 0...SONG.keyCount) {
             // CPU receptor
             var receptor = new Receptor((Note.swagWidth * i) + receptorOffset, strumY, SONG.keyCount, i);
+            receptor.camera = camHUD;
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             cpuStrums.add(receptor);
+            receptor.animation.finishCallback = (name:String) -> {
+                if(name == "confirm")
+                    receptor.playAnim("static", true);
+            };
 
             // Player receptor
             var receptor = new Receptor((Note.swagWidth * i) + ((Game.width * 0.5) + receptorOffset), strumY, SONG.keyCount, i);
+            receptor.camera = camHUD;
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             if(SettingsAPI.botplay) {
@@ -90,12 +101,16 @@ class PlayState extends MusicBeatScene {
         }
 
         unspawnNotes = ChartParser.parseNotes(SONG);
-        scriptTest.call("onCreate");
+        for (note in unspawnNotes)
+            note.camera = camHUD;
 
-        Game.camera.zoom = 0.75;
-        Game.camera.angle = 0;
-
+        camFollow = new Object(0, 0);
+        Game.camera.target = camFollow;
+        Game.camera.followLerp = 0.04;
+        
         startCountdown();
+
+        call("onCreatePost");
     }
 
     public function startCountdown() {
@@ -113,11 +128,9 @@ class PlayState extends MusicBeatScene {
     override function update(elapsed:Float) {
         super.update(elapsed);
 
-        Game.camera.angle += elapsed * 5;
-
         if(!endingSong) {
             Conductor.position += elapsed * 1000;
-            scriptTest.call("onUpdate", [elapsed]);
+            call("onUpdate", [elapsed]);
         }
 
         if(startingSong) {
@@ -142,8 +155,6 @@ class PlayState extends MusicBeatScene {
 
     public function goodNoteHit(note:Note) {
         if(note.mustPress) {
-            playerStrums.members[note.noteData].playAnim("confirm", true);
-
             if(!note.isSustainNote) {
                 var ratingSpr:Sprite = new Sprite((Game.width * 0.55) - 40, (Game.height * 0.5) - 60).loadGraphic(Paths.image('gameplay/ratings/sick'));
                 ratingSpr.scale.set(0.7, 0.7);
@@ -163,6 +174,7 @@ class PlayState extends MusicBeatScene {
                 });
             }
         }
+        note.strumLine.members[note.noteData].playAnim("confirm", true);
         notes.deleteNote(note);
     }
 
@@ -199,6 +211,13 @@ class PlayState extends MusicBeatScene {
 
         if(startingSong || endingSong) return;
 
+        call("onBeatHit");
+
+        if (SONG.notes[Math.floor(Conductor.curBeat / 4)].mustHitSection)
+            camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
+        else
+            camFollow.setPosition(100 + 429 / 2 + 150, 100 + 767 / 2 - 100); // 464.5, 385.5
+
         var resyncTime:Float = 20 * Game.timeScale;
         if(Math.abs(Conductor.position - inst.time) > resyncTime || Math.abs(Conductor.position - vocals.time) > resyncTime)
             resyncVocals();
@@ -228,7 +247,13 @@ class PlayState extends MusicBeatScene {
     }
 
     override function destroy() {
-        scriptTest.destroy();
+        for (script in scripts)
+            script.destroy();
         super.destroy();
+    }
+
+    function call(method:String, ?parameters:Array<Dynamic>) {
+        for (script in scripts)
+            script.call(method, parameters);
     }
 }

@@ -133,6 +133,18 @@ class AnimationController extends Object {
         return __animations.exists(name);
     }
 
+    /**
+     * Set an animation specific offset.
+     * @param name The name of the animation.
+     * @param x The new x offset,
+     * @param y The new y offset.
+     */
+    public function setAnimOffset(name:String, x:Float, y:Float) {
+        var anim = __animations.get(name);
+        if (anim != null)
+            anim.offset.set(x, y);
+    }
+
     //** Don't worry about the stuff past this point! This just handles the animation and makes it work. **//
     //** Unless you wanna fix a bug you find here, then go right ahead! **//
 
@@ -209,6 +221,12 @@ class Animation {
     }
 
     /**
+     * An aniamtion specific offset.
+     * Adapts to scale and angle.
+     */
+    public var offset:Point2D;
+
+    /**
      * Whether or not this animation loops when finished.
      */
     public var loop:Bool = true;
@@ -217,5 +235,6 @@ class Animation {
         this.name = name;
         this.frameRate = frameRate;
         this.loop = loop;
+        offset = new Point2D();
     }
 }

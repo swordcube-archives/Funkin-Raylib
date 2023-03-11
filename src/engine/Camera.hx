@@ -3,6 +3,10 @@ package engine;
 class Camera extends Object {
     private var __rlCamera:Rl.Camera2D;
 
+    public var target:Object = null;
+    public var scroll:Point2D = new Point2D();
+    public var renderPos:Point2D = new Point2D();
+    public var followLerp:Float = 1;
     public var initialZoom:Float = 1.0;
     public var zoom:Float = 1.0;
 
@@ -23,6 +27,15 @@ class Camera extends Object {
 
         __rlCamera.rotation = angle % 360;
         __rlCamera.zoom = zoom;
+
+        if (target != null) { 
+            scroll.x = MathUtil.lerp(scroll.x, target.x, MathUtil.bound(followLerp * 60 * elapsed, 0, 1));
+            scroll.y = MathUtil.lerp(scroll.y, target.y, MathUtil.bound(followLerp * 60 * elapsed, 0, 1));
+        }
+        var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
+        var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
+        renderPos.x = (scroll.x * cos + scroll.y * sin);
+        renderPos.y = (scroll.x * -sin + scroll.y * cos);
     }
 
     override function destroy() {

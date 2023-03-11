@@ -78,6 +78,12 @@ class Sprite extends Object {
 	public var offset:Point2D = new Point2D(0, 0);
 
 	/**
+	 * How much the sprite moves with the camera.
+	 * Can be used for parallax.
+	 */
+	public var scrollFactor:Point2D = new Point2D(1, 1);
+
+	/**
 	 * The width of the actual graphic or image being displayed (not necessarily the game object/bounding box).
 	 */
 	public var frameWidth:Int = 0;
@@ -275,14 +281,20 @@ class Sprite extends Object {
 
 	override function draw() {
 		super.draw();
+		var ogAngle:Float = angle;
 		angle %= 360;
 
+		var camX:Float = -0.5 * (width * Math.abs(camera.zoom) - width);
+		var camY:Float = -0.5 * (height * Math.abs(camera.zoom) - height);
+
+		scale.x *= camera.zoom;
+		scale.y *= camera.zoom;
 		if (flipX) scale.x *= -1;
 		if (flipY) scale.y *= -1;
 		if (shader != null) Rl.beginShaderMode(shader.actualShader);
 
-		var x:Float = (position.x + offset.x);
-		var y:Float = (position.y + offset.y);
+		var x:Float = (position.x + offset.x / camera.zoom - Game.width * 0.5) * camera.zoom + Game.width * 0.5;
+		var y:Float = (position.y + offset.y / camera.zoom - Game.height * 0.5) * camera.zoom + Game.height * 0.5;
 
 		color.a = Std.int(alpha * 255);
 
@@ -308,9 +320,13 @@ class Sprite extends Object {
 				};
 
 				var frameData:FrameData = null;
-				if (animation.curAnim != null)
+				var animOffsetX:Float = 0;
+				var animOffsetY:Float = 0;
+				if (animation.curAnim != null) {
 					frameData = animation.curAnim.__frames[animation.curAnim.curFrame];
-				else
+					animOffsetX = animation.curAnim.offset.x;
+					animOffsetY = animation.curAnim.offset.y;
+				} else
 					frameData = (frames.frames != null) ? frames.frames[0] : fallbackFrameData;
 
 				var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
@@ -321,30 +337,29 @@ class Sprite extends Object {
 					increments[1] = cos * -1;
 				}
 				var frameOffsetCoords = [
-					(-frameData.frameX * Math.abs(scale.x)) * cos + (-frameData.frameY * Math.abs(scale.y)) * (sin + increments[0]),
-					(-frameData.frameX * Math.abs(scale.x)) * -sin + (-frameData.frameY * Math.abs(scale.y)) * (cos + increments[1])
+					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camX) * cos + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camY) * (sin + increments[0]),
+					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camX) * -sin + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camY) * (cos + increments[1])
 				];
 
-				var adjustedPos = Rl.getWorldToScreen2D(Rl.Vector2.create(
+				var adjustedPos = Rl.Vector2.create(
 					(x + frameOffsetCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))), 
 					(y + frameOffsetCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-				), camera.__rlCamera);
-
+				);
 				Rl.drawTexturePro(texture, // the texture (woah)
 					Rl.Rectangle.create(
-            frameData.x, 
-            frameData.y, 
-            frameData.width * (scale.x < 0 ? -1 : 1),
-            frameData.height * (scale.y < 0 ? -1 : 1)
-          ), // the coordinates of x, y, width, and height FROM the image
+            			frameData.x, 
+            			frameData.y, 
+            			frameData.width * (scale.x < 0 ? -1 : 1),
+            			frameData.height * (scale.y < 0 ? -1 : 1)
+        			), // the coordinates of x, y, width, and height FROM the image
 					Rl.Rectangle.create(
-            adjustedPos.x,
-						adjustedPos.y, 
-            frameData.width * Math.abs(scale.x) * Math.abs(camera.zoom),
-						frameData.height * Math.abs(scale.y) * Math.abs(camera.zoom)
-          ), // where we want to display it on screen + how big it should be
+            			adjustedPos.x - camX + camera.renderPos.x * scrollFactor.x,
+						adjustedPos.y - camY + camera.renderPos.y * scrollFactor.y,
+            			frameData.width * Math.abs(scale.x),
+						frameData.height * Math.abs(scale.y)
+        			), // where we want to display it on screen + how big it should be
 					Rl.Vector2.create(origin.x, origin.y), // origin shit
-					angle + camera.angle % 360, // rotation
+					angle, // rotation
 					color // tint
 				);
 
@@ -353,10 +368,10 @@ class Sprite extends Object {
 			}
 		} else {
 			@:privateAccess
-			var adjustedPos = Rl.getWorldToScreen2D(Rl.Vector2.create(
+			var adjustedPos = Rl.Vector2.create(
 				x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
 				y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-			), camera.__rlCamera);
+			);
 
 			texture.width = Std.int(frameWidth * scale.x);
 			texture.height = Std.int(frameHeight * scale.y);
@@ -364,17 +379,20 @@ class Sprite extends Object {
                 texture, 
                 Rl.Rectangle.create(0, 0, MathUtil.absInt(texture.width), MathUtil.absInt(texture.height)),
                 Rl.Rectangle.create(
-                    adjustedPos.x,
-                    adjustedPos.y, 
-                    MathUtil.absInt(texture.width) * Math.abs(camera.zoom), 
-                    MathUtil.absInt(texture.height) * Math.abs(camera.zoom)
+					adjustedPos.x - camX + camera.renderPos.x * scrollFactor.x,
+					adjustedPos.y - camY + camera.renderPos.y * scrollFactor.y,
+                    MathUtil.absInt(texture.width), 
+                    MathUtil.absInt(texture.height)
                 ),
                 Rl.Vector2.create(origin.x, origin.y), 
                 angle, 
-				        color
+				color
             );
 		}
 
+		angle = ogAngle;
+		scale.x /= camera.zoom;
+		scale.y /= camera.zoom;
 		if (flipX) scale.x *= -1;
 		if (flipY) scale.y *= -1;
 		if (shader != null) Rl.endShaderMode();

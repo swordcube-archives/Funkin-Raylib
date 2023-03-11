@@ -6,7 +6,9 @@ class FileShader implements engine.interfaces.IDestroyable {
     public var actualShader:Rl.Shader;
 
     public function new(fragFilePath:String, ?vertexFilePath:String) {
+        Rl.setTraceLogLevel(Rl.TraceLogLevel.FATAL);
         actualShader = Rl.loadShader(vertexFilePath, fragFilePath);
+        Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
     }
 
     public var failedToFind:Array<String> = [];
