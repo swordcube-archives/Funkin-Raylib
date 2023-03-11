@@ -1,4 +1,4 @@
-package engine.utilities;
+package engine.managers;
 
 class TimerManager {
     public static var timers:Array<Timer> = [];

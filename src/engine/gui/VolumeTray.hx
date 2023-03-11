@@ -38,6 +38,7 @@ class VolumeTray extends Object {
 
     public function new() {
         super();
+        Rl.setTextureFilter(font.texture, 1);
         position.set(0, -boxSize.y * scale);
     }
 

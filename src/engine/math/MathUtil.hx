@@ -12,7 +12,7 @@ typedef Vector2 = Dynamic;
 
 /**
  * `FlxMath` but partially ported to this shitty raylib engine.
- * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/math/FlxMath.heightx
+ * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/math/FlxMath.hx
  */
 class MathUtil {
 	/**

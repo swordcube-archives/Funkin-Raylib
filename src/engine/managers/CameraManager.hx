@@ -1,4 +1,4 @@
-package engine.utilities;
+package engine.managers;
 
 class CameraManager {
     public var list:Array<Camera> = [];
