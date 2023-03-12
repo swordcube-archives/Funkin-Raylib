@@ -1,5 +1,11 @@
 package engine.math;
 
+#if !macro
+import Rl.Color;
+#else
+typedef Color = Dynamic;
+#end
+
 /**
  * A class containing a set of functions for random generation. Should be accessed via `Game.random`.
  */
@@ -276,6 +282,7 @@ class Random {
 	 * @return  A color value as a Color.
 	 */
 	public function color(?Min:Color, ?Max:Color, ?Alpha:Int, GreyScale:Bool = false):Color {
+		#if !macro
 		var red:Int;
 		var green:Int;
 		var blue:Int;
@@ -304,6 +311,9 @@ class Random {
 		}
 
 		return Color.create(red, green, blue, alpha);
+		#else
+		return null;
+		#end
 	}
 
 	/**

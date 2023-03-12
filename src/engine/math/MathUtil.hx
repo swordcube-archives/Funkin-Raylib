@@ -101,8 +101,12 @@ class MathUtil {
 	 * lerp(5, 15, 0.5) = 10
 	 * lerp(5, 15, -1) = -5
 	 * ```
+	 * 
+	 * @param adjustToFramerate Whether or not to adjust the ratio to the current game framerate.
+	 * @param framerate (Optional, Defaults to `60`) The framerate to adjust the number to.
 	 */
-	public static inline function lerp(a:Float, b:Float, ratio:Float):Float {
+	public static inline function lerp(a:Float, b:Float, ratio:Float, ?adjustToFramerate:Bool = false, ?framerate:Float = 60):Float {
+		if(adjustToFramerate) ratio = MathUtil.adjustToFramerate(ratio, framerate);
 		return a + ratio * (b - a);
 	}
 
@@ -259,7 +263,7 @@ class MathUtil {
 	 * @param	SpriteB		The second Sprite
 	 * @return	Distance between the sprites in pixels
 	 */
-	public static inline function distanceBetween(SpriteA:Sprite, SpriteB:Sprite):Int {
+	public static inline function distanceBetween(SpriteA:#if !macro Sprite #else Dynamic #end, SpriteB:#if !macro Sprite #else Dynamic #end):Int {
 		var dx:Float = (SpriteA.x + SpriteA.origin.x) - (SpriteB.x + SpriteB.origin.x);
 		var dy:Float = (SpriteA.y + SpriteA.origin.y) - (SpriteB.y + SpriteB.origin.y);
 		return Std.int(MathUtil.vectorLength(dx, dy));
@@ -275,7 +279,7 @@ class MathUtil {
 	 * @param	IncludeEqual	If set to true, the function will return true if the calculated distance is equal to the given Distance
 	 * @return	True if the distance between the sprites is less than the given Distance
 	 */
-	public static inline function isDistanceWithin(SpriteA:Sprite, SpriteB:Sprite, Distance:Float, IncludeEqual:Bool = false):Bool {
+	public static inline function isDistanceWithin(SpriteA:#if !macro Sprite #else Dynamic #end, SpriteB:#if !macro Sprite #else Dynamic #end, Distance:Float, IncludeEqual:Bool = false):Bool {
 		var dx:Float = (SpriteA.x + SpriteA.origin.x) - (SpriteB.x + SpriteB.origin.x);
 		var dy:Float = (SpriteA.y + SpriteA.origin.y) - (SpriteB.y + SpriteB.origin.y);
 
@@ -293,7 +297,7 @@ class MathUtil {
 	 * @param	Target	The Point2D
 	 * @return	Distance in pixels
 	 */
-	public static inline function distanceToPoint(Sprite:Sprite, Target:Point2D):Int {
+	public static inline function distanceToPoint(Sprite:#if !macro Sprite #else Dynamic #end, Target:Point2D):Int {
 		var dx:Float = (Sprite.x + Sprite.origin.x) - Target.x;
 		var dy:Float = (Sprite.y + Sprite.origin.y) - Target.y;
 		return Std.int(MathUtil.vectorLength(dx, dy));
@@ -310,7 +314,7 @@ class MathUtil {
 	 * @param	IncludeEqual	If set to true, the function will return true if the calculated distance is equal to the given Distance
 	 * @return	True if the distance between the sprites is less than the given Distance
 	 */
-	public static inline function isDistanceToPointWithin(Sprite:Sprite, Target:Point2D, Distance:Float, IncludeEqual:Bool = false):Bool {
+	public static inline function isDistanceToPointWithin(Sprite:#if !macro Sprite #else Dynamic #end, Target:Point2D, Distance:Float, IncludeEqual:Bool = false):Bool {
 		var dx:Float = (Sprite.x + Sprite.origin.x) - (Target.x);
 		var dy:Float = (Sprite.y + Sprite.origin.y) - (Target.y);
 
@@ -461,5 +465,16 @@ class MathUtil {
 		#else
 		return null;
 		#end
+	}
+
+	/**
+	 * Adjusts a number to the current game framerate and returns it.
+	 * Useful for certain lerps! Like camera bumping without tweening it back after.
+	 * 
+	 * @param input The number to adjust.
+	 * @param framerate (Optional, Defaults to `60`) The framerate to adjust the number to.
+	 */
+	public static inline function adjustToFramerate(input:Float, ?framerate:Float = 60) {
+		return Game.elapsed * framerate * input;
 	}
 }

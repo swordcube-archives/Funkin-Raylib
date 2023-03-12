@@ -20,8 +20,10 @@ enum abstract KeyState(Int) to Int from Int {
  */
 @:enum
 abstract Keys(Int) from Int to Int {
+	#if !macro
 	public static var fromStringMap(default, null):Map<String, Keys> = MacroUtil.buildMap("engine.keyboard.Keys");
 	public static var toStringMap(default, null):Map<Keys, String> = MacroUtil.buildMap("engine.keyboard.Keys", true);
+	#end
 
 	var ANY = -1; // Key: ANY; used for any key pressed
 	var NONE = 0; // Key: NULL; used for no key pressed
@@ -135,6 +137,7 @@ abstract Keys(Int) from Int to Int {
 	var NUMPAD_ENTER = 335; // Key: Numpad Enter
 	var NUMPAD_EQUAL = 336; // Key: Numpad =
 
+	#if !macro
 	@:from
 	public static inline function fromString(s:String) {
 		s = s.toUpperCase();
@@ -145,4 +148,5 @@ abstract Keys(Int) from Int to Int {
 	public inline function toString():String {
 		return toStringMap.get(this);
 	}
+	#end
 }

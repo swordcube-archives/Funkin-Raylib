@@ -281,121 +281,149 @@ class Sprite extends Object {
 
 	override function draw() {
 		super.draw();
-		var ogAngle:Float = angle;
-		angle %= 360;
+		if(cameras == null) cameras = [];
+		
+		for(camera in cameras)
+			drawOnCamera(camera);
+	}
 
-		var camOffset:Rl.Vector2 = camera.getCamOffsets(width, height);
+	/**
+	 * Queues the camera to draw the sprite onto a specific camera.
+	 * You have to do `camera.draw()` to get the camera to actually draw anything.
+	 * 
+	 * @param camera The camera to draw this sprite onto.
+	 */
+	public function drawOnCamera(camera:Camera) {
+		if(!(Game.cameras.list.contains(camera) || camera == Game.camera)) return;
 
-		scale.x *= camera.zoom;
-		scale.y *= camera.zoom;
-		if (flipX) scale.x *= -1;
-		if (flipY) scale.y *= -1;
-		if (shader != null) Rl.beginShaderMode(shader.actualShader);
-
-		var x:Float = (position.x + offset.x / camera.zoom - Game.width * 0.5) * camera.zoom + Game.width * 0.5;
-		var y:Float = (position.y + offset.y / camera.zoom - Game.height * 0.5) * camera.zoom + Game.height * 0.5;
-
-		color.a = Std.int(alpha * 255);
-
-		if (frames != null) {
-			var texture:Texture2D = frames.texture;
-
-            // TODO: fix all of this to work with negative scales correctly
-            // (it should just display the sprite but flipped on x and/or y axis)
-			//hi i sorta fixed this :D -srt
-
-			// draw the thing
-			@:privateAccess {
-				if (animation.reversed && animation.curAnim != null)
-					animation.curAnim.__frames.reverse();
-
-				var fallbackFrameData:FrameData = {
-					name: "",
-					x: 0,
-					y: 0,
-					frameX: 0,
-					frameY: 0,
-					width: MathUtil.absInt(texture.width),
-					height: MathUtil.absInt(texture.height)
-				};
-
-				var frameData:FrameData = null;
-				var animOffsetX:Float = 0;
-				var animOffsetY:Float = 0;
-				if (animation.curAnim != null) {
-					frameData = animation.curAnim.__frames[animation.curAnim.curFrame];
-					animOffsetX = animation.curAnim.offset.x;
-					animOffsetY = animation.curAnim.offset.y;
-				} else
-					frameData = (frames.frames != null) ? frames.frames[0] : fallbackFrameData;
-
-				var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
-				var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
-				var increments = [0.0, 0.0];
-				if (scale.y < 0) {
-					increments[0] = sin * -1;
-					increments[1] = cos * -1;
-				}
-				var frameOffsetCoords = [
-					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * cos + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (sin + increments[0]),
-					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * -sin + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (cos + increments[1])
-				];
-
-				var adjustedPos:Rl.Vector2 = camera.adjustToCamera(Rl.Vector2.create(
-					(x + frameOffsetCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))), 
-					(y + frameOffsetCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-				), camOffset.x, camOffset.y, scrollFactor);
-				Rl.drawTexturePro(texture, // the texture (woah)
-					Rl.Rectangle.create(
-            			frameData.x, 
-            			frameData.y, 
-            			frameData.width * (scale.x < 0 ? -1 : 1),
-            			frameData.height * (scale.y < 0 ? -1 : 1)
-        			), // the coordinates of x, y, width, and height FROM the image
-					Rl.Rectangle.create(
-            			adjustedPos.x,
-						adjustedPos.y,
-            			frameData.width * Math.abs(scale.x),
-						frameData.height * Math.abs(scale.y)
-        			), // where we want to display it on screen + how big it should be
-					Rl.Vector2.create(origin.x, origin.y), // origin shit
-					angle, // rotation
-					color // tint
-				);
-
-				if (animation.reversed && animation.curAnim != null)
-					animation.curAnim.__frames.reverse();
-			}
-		} else {
+		camera.renderQueue.push(() -> {
 			@:privateAccess
-			var adjustedPos = camera.adjustToCamera(Rl.Vector2.create(
-				x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
-				y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-			), camOffset.x, camOffset.y, scrollFactor);
-
-			texture.width = Std.int(frameWidth * scale.x);
-			texture.height = Std.int(frameHeight * scale.y);
-			Rl.drawTexturePro(
-                texture, 
-                Rl.Rectangle.create(0, 0, MathUtil.absInt(texture.width), MathUtil.absInt(texture.height)),
-                Rl.Rectangle.create(
-					adjustedPos.x,
-					adjustedPos.y,
-                    MathUtil.absInt(texture.width), 
-                    MathUtil.absInt(texture.height)
-                ),
-                Rl.Vector2.create(origin.x, origin.y), 
-                angle, 
-				color
-            );
-		}
-
-		angle = ogAngle;
-		scale.x /= camera.zoom;
-		scale.y /= camera.zoom;
-		if (flipX) scale.x *= -1;
-		if (flipY) scale.y *= -1;
-		if (shader != null) Rl.endShaderMode();
+			Rl.beginMode2D(camera.__rlCamera);
+	
+			var ogAngle:Float = angle;
+			angle %= 360;
+	
+			var camOffset:Rl.Vector2 = camera.getCamOffsets(width, height);
+	
+			scale.x *= camera.zoom;
+			scale.y *= camera.zoom;
+			if (flipX) scale.x *= -1;
+			if (flipY) scale.y *= -1;
+			if (shader != null) Rl.beginShaderMode(shader.actualShader);
+	
+			var correctedPos = Rl.Vector2.create(
+				(position.x + offset.x / camera.zoom - Game.width * 0.5) * camera.zoom + Game.width * 0.5,
+				(position.y + offset.y / camera.zoom - Game.height * 0.5) * camera.zoom + Game.height * 0.5
+			);
+	
+			color.a = Std.int(alpha * 255);
+	
+			if (frames != null) {
+				var texture:Texture2D = frames.texture;
+	
+				// TODO: fix all of this to work with negative scales correctly
+				// (it should just display the sprite but flipped on x and/or y axis)
+				//hi i sorta fixed this :D -srt
+	
+				// draw the thing
+				@:privateAccess {
+					if (animation.reversed && animation.curAnim != null)
+						animation.curAnim.__frames.reverse();
+	
+					var fallbackFrameData:FrameData = {
+						name: "",
+						x: 0,
+						y: 0,
+						frameX: 0,
+						frameY: 0,
+						width: texture.width,
+						height: texture.height
+					};
+	
+					var frameData:FrameData = null;
+					var animOffsetX:Float = 0;
+					var animOffsetY:Float = 0;
+					if (animation.curAnim != null) {
+						frameData = animation.curAnim.__frames[animation.curAnim.curFrame];
+						animOffsetX = animation.curAnim.offset.x;
+						animOffsetY = animation.curAnim.offset.y;
+					} else
+						frameData = (frames.frames != null) ? frames.frames[0] : fallbackFrameData;
+	
+					var sin = Math.sin(angle / -180 * MathUtil.STANDARD_PI);
+					var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
+					var increments = [0.0, 0.0];
+					if (scale.y < 0) {
+						increments[0] = sin * -1;
+						increments[1] = cos * -1;
+					}
+					var frameOffsetCoords = [
+						(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * cos + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (sin + increments[0]),
+						(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * -sin + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (cos + increments[1])
+					];
+	
+					var adjustedPos:Rl.Vector2 = camera.adjustToCamera(Rl.Vector2.create(
+						(correctedPos.x + frameOffsetCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))), 
+						(correctedPos.y + frameOffsetCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
+					), camOffset.x, camOffset.y, scrollFactor);
+					
+					Rl.drawTexturePro(texture, // the texture (woah)
+						Rl.Rectangle.create(
+							frameData.x, 
+							frameData.y, 
+							frameData.width * (scale.x < 0 ? -1 : 1),
+							frameData.height * (scale.y < 0 ? -1 : 1)
+						), // the coordinates of x, y, width, and height FROM the image
+						Rl.Rectangle.create(
+							adjustedPos.x,
+							adjustedPos.y,
+							MathUtil.absInt(Std.int(frameData.width * Math.abs(scale.x))),
+							MathUtil.absInt(Std.int(frameData.height * Math.abs(scale.y)))
+						), // where we want to display it on screen + how big it should be
+						Rl.Vector2.create(origin.x, origin.y), // origin shit
+						angle, // rotation
+						color // tint
+					);
+	
+					if (animation.reversed && animation.curAnim != null)
+						animation.curAnim.__frames.reverse();
+				}
+			} else {
+				@:privateAccess
+				var adjustedPos = camera.adjustToCamera(Rl.Vector2.create(
+					correctedPos.x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
+					correctedPos.y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
+				), camOffset.x, camOffset.y, scrollFactor);
+	
+				Rl.drawTexturePro(
+					texture, 
+					Rl.Rectangle.create(
+						0, 
+						0, 
+						texture.width * (scale.x < 0 ? -1 : 1), 
+						texture.height * (scale.y < 0 ? -1 : 1)
+					),
+					Rl.Rectangle.create(
+						adjustedPos.x,
+						adjustedPos.y,
+						MathUtil.absInt(Std.int(texture.width * scale.x)), 
+						MathUtil.absInt(Std.int(texture.height * scale.y))
+					),
+					Rl.Vector2.create(origin.x, origin.y), 
+					angle, 
+					color
+				);
+			}
+	
+			angle = ogAngle;
+			scale.x /= camera.zoom;
+			scale.y /= camera.zoom;
+			if (flipX) scale.x *= -1;
+			if (flipY) scale.y *= -1;
+			if (shader != null) Rl.endShaderMode();
+	
+			Rl.endMode2D();
+		});
 	}
 
 	override function destroy() {

@@ -14,4 +14,6 @@ import engine.utilities.*;
 using engine.utilities.StringUtil;
 #end
 
+import engine.utilities.Logs;
+
 using StringTools;

@@ -235,7 +235,6 @@ class StringUtil {
 	 * @param	enumValueOrEnum	The enum value or enum in question.
 	 * @param	simple	Returns only the type name, without package(s).
 	 * @return	The name of the enum as a string.
-	 * @since 4.4.0
 	 */
 	public static function getEnumName(enumValueOrEnum:OneOfTwo<EnumValue, Enum<Dynamic>>, simple:Bool = false):String {
 		var e:Enum<Dynamic>;
@@ -263,7 +262,6 @@ class StringUtil {
 	 * For example, the host for "ftp://anonymous@ftp.domain.test:990/" is "ftp.domain.test".
 	 *
 	 * @return	The host from the URL; or the empty string ("") upon failure.
-	 * @since 4.3.0
 	 */
 	public static function getHost(url:String):String {
 		var hostFromURL:EReg = ~/^(?:[a-z][a-z0-9+\-.]*:\/\/)?(?:[a-z0-9\-._~%!$&'()*+,;=]+@)?([a-z0-9\-._~%]{3,}|\[[a-f0-9:.]+\])?(?::[0-9]+)?/i;
@@ -422,7 +420,6 @@ class StringUtil {
 
 	/**
 	 * Returns true if `s` equals `null` or is empty.
-	 * @since 4.1.0
 	 */
 	public static inline function isNullOrEmpty(s:String):Bool {
 		return s == null || s.length == 0;

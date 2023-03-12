@@ -1,9 +1,6 @@
 package engine;
 
 import engine.managers.CameraManager;
-import Rl.Texture2D;
-import Rl.Font;
-import Rl.RenderTexture2D;
 import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
@@ -12,7 +9,16 @@ import engine.managers.SignalManager;
 import engine.sound.SoundManager;
 import engine.keyboard.KeyboardManager;
 import engine.Scene;
+import engine.utilities.AssetCache;
+import engine.math.Random;
+import engine.managers.*;
+
+#if !macro
+import Rl.Texture2D;
+import Rl.Font;
+import Rl.RenderTexture2D;
 import Rl.Colors;
+#end
 
 enum abstract ScaleMode(Int) to Int from Int {
 	/**
@@ -33,15 +39,27 @@ class Game {
 	public static var scaleMode:ScaleMode = FIXED;
 	public static var assetCache:AssetCache;
 
+	/**
+	 * Used to generate random numbers.
+	 */
 	public static var random:Random;
 
+	/**
+	 * Used to manage cameras. To have multiple cameras in one scene,
+	 * Do this:
+	 * ```haxe
+	 * Game.cameras.add(camera);
+	 * ```
+	 * 
+	 * To let the game know that the camera should be rendered.
+	 */
 	public static var cameras:CameraManager;
 
 	public static var keys:KeyboardManager;
 	public static var sound:SoundManager;
-	public static var signals:SignalManager;
 
 	public static var timers:TimerManager;
+	public static var signals:SignalManager;
 
 	public static var scene:Scene;
 	public static var width:Int = 0;
@@ -63,15 +81,27 @@ class Game {
 
 	public static var elapsed(get, never):Float;
 	private static inline function get_elapsed():Float {
+		#if !macro
 		var elapsedTime:Float = Rl.getFrameTime();
 		if(elapsedTime > maxElapsed)
 			elapsedTime = maxElapsed;
 
 		return elapsedTime;
+		#else
+		return 0;
+		#end
 	}
 
+	#if !macro
+	/**
+	 * The maximum amount that `elapsed` can be during update functions.
+	 */
 	public static var maxElapsed:Float = 0.1;
 
+	/**
+	 * Switches to a instance of a new scene.
+	 * @param toScene The scene to switch to.
+	 */
 	public static function switchScene(toScene:Scene) {
 		nextScene = toScene;
 		__switchToNextScene();
@@ -89,6 +119,7 @@ class Game {
 		signals.sceneDestroy.dispatch();
 
 		Game.camera = new Camera();
+		Game.cameras.init();
 
 		scene = nextScene;
 		if(scene != null) scene.create();
@@ -116,7 +147,10 @@ class Game {
 		Game.timers = new TimerManager();
 		Game.sound = new SoundManager();
 		Game.assetCache = new AssetCache();
+
+		Game.camera = new Camera();
 		Game.cameras = new CameraManager();
+		Game.cameras.init();
 		
 		Game.random = new Random();
 		Game.random.resetInitialSeed();
@@ -158,6 +192,9 @@ class Game {
 					bullShit.height = Game.height;
 			}
 
+			// TODO: fix transparent sprites being tinted to
+			// the color of clear background shit
+
 			Rl.clearBackground(Colors.BLACK);
 			Rl.beginTextureMode(renderTex);
 			Rl.clearBackground(Colors.BLACK);
@@ -180,6 +217,13 @@ class Game {
 					Game.signals.postSceneDraw.dispatch();
 				}
 
+				// Draw contents of all visible cameras
+				if(Game.camera != null)
+					Game.camera.draw();
+
+				for(camera in Game.cameras.list)
+					camera.draw();
+
 				// Rendering volume tray
 				for(object in [volumeTray, Tween.globalManager]) {
 					if(!object.alive) continue;
@@ -199,6 +243,13 @@ class Game {
 				} else {
 					if(Game.scene != null)
 						Game.scene.draw();
+
+					// Draw contents of all visible cameras
+					if(Game.camera != null)
+						Game.camera.draw();
+
+					for(camera in Game.cameras.list)
+						camera.draw();
 				}
 			}
 
@@ -232,4 +283,5 @@ class Game {
 		Rl.closeAudioDevice();
 		Rl.closeWindow();
 	}
+	#end
 }

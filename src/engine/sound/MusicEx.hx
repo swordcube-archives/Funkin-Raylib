@@ -3,9 +3,11 @@ package engine.sound;
 import engine.interfaces.ISound;
 import engine.utilities.typeLimit.OneOfTwo;
 import sys.FileSystem;
-#if !macro
 import engine.Object;
+
+#if !macro
 import Rl.Music;
+#end
 
 /**
  * A class for playing long sound effects.
@@ -14,6 +16,7 @@ import Rl.Music;
  * Do ***NOT*** use this class for every sound, only use it when necessary.
  */
 class MusicEx extends Object implements ISound {
+    #if !macro
     public var audioLoaded:Bool = false;
 
     private var __sound:Music;
@@ -83,9 +86,11 @@ class MusicEx extends Object implements ISound {
     public var onComplete:Void->Void;
 
     private var __path:String;
+    #end
 
     public function new(path:String, ?volume:Float = 1, ?loop:Bool = true) {
         super();
+        #if !macro
         this.__path = path;
 
         audioLoaded = FileSystem.exists(path);
@@ -96,8 +101,10 @@ class MusicEx extends Object implements ISound {
         this.pitch = 1;
         this.loop = loop;
         Rl.playMusicStream(__sound);
+        #end
     }
 
+    #if !macro
     override function update(elapsed:Float) {
         super.update(elapsed);
         if(!audioLoaded) return;
@@ -111,40 +118,47 @@ class MusicEx extends Object implements ISound {
                 onComplete();
         }
     }
+    #end
 
     public function stop() {
+        #if !macro
         playing = false;
         if(!audioLoaded) return this;
 
         Rl.stopMusicStream(__sound);
+        #end
         return this;
     }
     public function play() {return resume();}
 
     public function pause() {
+        #if !macro
         playing = false;
         if(!audioLoaded) return this;
 
         Rl.pauseMusicStream(__sound);
+        #end
         return this;
     }
 
     public function resume() {
+        #if !macro
         playing = true;
         if(!audioLoaded) return this;
         
         Rl.resumeMusicStream(__sound);
+        #end
         return this;
     }
 
     override function destroy() {
+        #if !macro
         playing = false;
         if(audioLoaded)
             Rl.unloadMusicStream(__sound);
 
         audioLoaded = false;
-
+        #end
         super.destroy();
     }
 }
-#end

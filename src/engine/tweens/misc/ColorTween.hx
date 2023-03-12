@@ -1,8 +1,14 @@
 package engine.tweens.misc;
 
-import engine.Sprite;
 import engine.tweens.Tween;
+import engine.utilities.ColorUtil;
+
+#if !macro
+import engine.Sprite;
 import Rl.Color;
+#else
+typedef Color = Dynamic;
+#end
 
 /**
  * Tweens a color's red, green, and blue properties
@@ -17,7 +23,7 @@ class ColorTween extends Tween {
 	/**
 	 * Optional sprite object whose color to tween
 	 */
-	public var sprite(default, null):Sprite;
+	public var sprite(default, null):#if !macro Sprite #else Dynamic #end;
 
 	/**
 	 * Clean up references
@@ -36,7 +42,7 @@ class ColorTween extends Tween {
 	 * @param	Sprite			Optional sprite object whose color to tween.
 	 * @return	The ColorTween.
 	 */
-	public function tween(Duration:Float, FromColor:Color, ToColor:Color, ?Sprite:Sprite):ColorTween {
+	public function tween(Duration:Float, FromColor:Color, ToColor:Color, ?Sprite:#if !macro Sprite #else Dynamic #end):ColorTween {
 		color = startColor = FromColor;
 		endColor = ToColor;
 		duration = Duration;

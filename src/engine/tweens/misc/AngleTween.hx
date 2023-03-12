@@ -1,7 +1,10 @@
 package engine.tweens.misc;
 
-import engine.Sprite;
 import engine.tweens.Tween;
+
+#if !macro
+import engine.Sprite;
+#end
 
 /**
  * Tweens from one angle to another.
@@ -12,7 +15,7 @@ class AngleTween extends Tween {
 	/**
 	 * Optional sprite object whose angle to tween
 	 */
-	public var sprite(default, null):Sprite;
+	public var sprite(default, null):#if !macro Sprite #else Dynamic #end;
 
 	var _start:Float;
 	var _range:Float;
@@ -32,7 +35,7 @@ class AngleTween extends Tween {
 	 * @param	ToAngle			End angle.
 	 * @param	Duration		Duration of the tween.
 	 */
-	public function tween(FromAngle:Float, ToAngle:Float, Duration:Float, ?Sprite:Sprite):AngleTween {
+	public function tween(FromAngle:Float, ToAngle:Float, Duration:Float, ?Sprite:#if !macro Sprite #else Dynamic #end):AngleTween {
 		_start = angle = FromAngle;
 		_range = ToAngle - angle;
 		duration = Duration;

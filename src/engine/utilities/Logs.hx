@@ -29,6 +29,7 @@ class Logs {
 	];
 
     public static function trace(value:Dynamic, type:LogType, ?showTag:Bool = true) {
+        #if !macro
         var time = Date.now();
         var timeStr:String = '${colors["cyan"]}[${Std.string(time.getHours()).addZeros(2)}:${Std.string(time.getMinutes()).addZeros(2)}:${Std.string(time.getSeconds()).addZeros(2)}] ';
 
@@ -40,5 +41,6 @@ class Logs {
             case ENGINE:  timeStr + colors["green"] +   (showTag ? "[ ENGINE ] " : "") + colors["reset"] + value;
             default:      timeStr + colors["cyan"] +    (showTag ? "[ INFO ] " : "") + colors["reset"] + value;
         });
+        #end
     }
 }

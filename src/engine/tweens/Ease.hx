@@ -1,5 +1,7 @@
 package engine.tweens;
 
+import engine.math.MathUtil;
+
 /**
  * Static class with useful easer functions that can be used by tweens.
  *
@@ -31,7 +33,6 @@ class Ease {
 	static var ELASTIC_AMPLITUDE:Float = 1;
 	static var ELASTIC_PERIOD:Float = 0.4;
 
-	/** @since 4.3.0 */
 	public static inline function linear(t:Float):Float {
 		return t;
 	}
@@ -84,32 +85,26 @@ class Ease {
 		return ((t *= 2) < 1) ? (t * t * t * t * t) / 2 : ((t -= 2) * t * t * t * t + 2) / 2;
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smoothStepIn(t:Float):Float {
 		return 2 * smoothStepInOut(t / 2);
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smoothStepOut(t:Float):Float {
 		return 2 * smoothStepInOut(t / 2 + 0.5) - 1;
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smoothStepInOut(t:Float):Float {
 		return t * t * (t * -2 + 3);
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smootherStepIn(t:Float):Float {
 		return 2 * smootherStepInOut(t / 2);
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smootherStepOut(t:Float):Float {
 		return 2 * smootherStepInOut(t / 2 + 0.5) - 1;
 	}
 
-	/** @since 4.3.0 */
 	public static inline function smootherStepInOut(t:Float):Float {
 		return t * t * t * (t * (t * 6 - 15) + 10);
 	}

@@ -5,8 +5,8 @@ import haxe.macro.Expr;
 #if !macro
 import engine.Object;
 import engine.Sprite;
-import engine.utilities.DirectionFlags;
 #end
+import engine.utilities.DirectionFlags;
 
 /**
  * A set of functions related to angle calculations.
@@ -36,7 +36,6 @@ class AngleUtil {
 		return Context.makeExpr(table, Context.currentPos());
 	}
 
-	#if !macro
 	/**
 	 * Convert radians to degrees by multiplying it with this value.
 	 */
@@ -96,7 +95,8 @@ class AngleUtil {
 	 * @param	AsDegrees	If you need the value in degrees instead of radians, set to true
 	 * @return	The angle (in radians unless asDegrees is true)
 	 */
-	public static function angleBetween(SpriteA:Sprite, SpriteB:Sprite, AsDegrees:Bool = false):Float {
+	public static function angleBetween(SpriteA:#if !macro Sprite #else Dynamic #end, SpriteB:#if !macro Sprite #else Dynamic #end, AsDegrees:Bool = false):Float {
+		#if !macro
 		var dx:Float = (SpriteB.x + SpriteB.origin.x) - (SpriteA.x + SpriteA.origin.x);
 		var dy:Float = (SpriteB.y + SpriteB.origin.y) - (SpriteA.y + SpriteA.origin.y);
 
@@ -104,6 +104,8 @@ class AngleUtil {
 			return asDegrees(Math.atan2(dy, dx));
 		else
 			return Math.atan2(dy, dx);
+		#end
+		return 0;
 	}
 
 	/**
@@ -115,7 +117,7 @@ class AngleUtil {
 	 * @param	AsDegrees	If you need the value in degrees instead of radians, set to true
 	 * @return	The angle (in radians unless AsDegrees is true)
 	 */
-	public static function angleBetweenPoint(Sprite:Sprite, Target:Point2D, AsDegrees:Bool = false):Float {
+	public static function angleBetweenPoint(Sprite:#if !macro Sprite #else Dynamic #end, Target:Point2D, AsDegrees:Bool = false):Float {
 		var dx:Float = (Target.x) - (Sprite.x + Sprite.origin.x);
 		var dy:Float = (Target.y) - (Sprite.y + Sprite.origin.y);
 
@@ -190,7 +192,6 @@ class AngleUtil {
 	static inline function get_TO_RAD():Float {
 		return MathUtil.STANDARD_PI / 180;
 	}
-	#end
 }
 
 typedef SinCos = {

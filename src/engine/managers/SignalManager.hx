@@ -1,18 +1,20 @@
 package engine.managers;
 
-import engine.utilities.Signal.TypedSignal;
+#if !macro
+import engine.utilities.Signal;
+#end
 
 class SignalManager {
-    public var preSceneCreate:Signal = new Signal();
-    public var postSceneCreate:Signal = new Signal();
+    public var preSceneCreate:#if !macro Signal = new Signal(); #else Dynamic = null; #end
+    public var postSceneCreate:#if !macro Signal = new Signal(); #else Dynamic = null; #end
 
-    public var preSceneUpdate:TypedSignal<Float->Void> = new TypedSignal<Float->Void>();
-    public var postSceneUpdate:TypedSignal<Float->Void> = new TypedSignal<Float->Void>();
+    public var preSceneUpdate:#if !macro TypedSignal<Float->Void> = new TypedSignal<Float->Void>(); #else Dynamic = null; #end
+    public var postSceneUpdate:#if !macro TypedSignal<Float->Void> = new TypedSignal<Float->Void>(); #else Dynamic = null; #end
 
-    public var sceneDestroy:Signal = new Signal();
+    public var sceneDestroy:#if !macro Signal = new Signal(); #else Dynamic = null; #end
 
-    public var preSceneDraw:Signal = new Signal();
-    public var postSceneDraw:Signal = new Signal();
+    public var preSceneDraw:#if !macro Signal = new Signal(); #else Dynamic = null; #end
+    public var postSceneDraw:#if !macro Signal = new Signal(); #else Dynamic = null; #end
 
     public function new() {}
 }

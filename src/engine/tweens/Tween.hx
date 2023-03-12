@@ -1,10 +1,10 @@
 package engine.tweens;
 
-import Rl.Color;
 import engine.Game;
 import engine.Object;
 import engine.Sprite;
 import engine.math.MathUtil;
+import engine.math.Point2D;
 import engine.tweens.Ease.EaseFunction;
 import engine.tweens.misc.AngleTween;
 import engine.tweens.misc.ColorTween;
@@ -18,6 +18,12 @@ import engine.tweens.motion.QuadMotion;
 import engine.tweens.motion.QuadPath;
 import engine.utilities.ArrayUtil;
 import engine.interfaces.IDestroyable;
+
+#if !macro
+import Rl.Color;
+#else
+typedef Color = Dynamic;
+#end
 
 /**
  * `TweenType` but ported to this shitty raylib engine.

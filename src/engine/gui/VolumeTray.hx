@@ -1,10 +1,14 @@
 package engine.gui;
 
 import engine.math.MathUtil;
+import engine.math.Point2D;
 import engine.keyboard.Keys;
+
+#if !macro
 import Rl.Font;
 import Rl.Color;
 import Rl.Colors;
+#end
 
 enum abstract VolumeStatus(Int) to Int from Int {
     var UP = 0;
@@ -26,22 +30,26 @@ class VolumeTray extends Object {
     public var volumeUpKeys:Array<Int> = [Keys.PLUS, Keys.NUMPAD_PLUS];
     public var muteKeys:Array<Int> = [Keys.ZERO, Keys.NUMPAD_ZERO];
 
-    public var font:Font = Rl.loadFont(Paths.font("nokiafc22.ttf"));
+    public var font:#if !macro Font #else Dynamic #end;
     public var scale:Float = 2;
     
     // note to self: alpha is an INT from 0 - 255
     // this is 0.7 * 255
-    public var boxColor:Color = Color.create(0, 0, 0, 178);
+    public var boxColor:#if !macro Color = Color.create(0, 0, 0, 178) #else Dynamic = null #end;
     public var boxSize:Point2D = new Point2D(80, 30);
 
     public var active = false;
 
     public function new() {
         super();
+        #if !macro
+        font = Rl.loadFont(Paths.font("nokiafc22.ttf"));
         Rl.setTextureFilter(font.texture, 1);
         position.set(0, -boxSize.y * scale);
+        #end
     }
 
+    #if !macro
     override function update(elapsed:Float) {
         super.update(elapsed);
 
@@ -74,20 +82,6 @@ class VolumeTray extends Object {
         }
     }
 
-    public function show(?volumeStatus:VolumeStatus) {
-        __timer = 1;
-        position.y = 0;
-        active = true;
-
-        switch(volumeStatus) {
-            case UP:        Game.sound.play(volumeUpSound);
-            case DOWN:      Game.sound.play(volumeDownSound);
-            case MUTE:      Game.sound.play(muteSound);
-            case UNMUTE:    Game.sound.play(unmuteSound);
-        }
-        __globalVolume = Std.int(Game.sound.volume * 10);
-    }
-
     override function draw() {
         var boxX:Float = ((Rl.getScreenWidth() - (boxSize.x * scale)) * 0.5) + position.x;
         var boxY:Float = position.y;
@@ -103,5 +97,22 @@ class VolumeTray extends Object {
             bx += 6;
             by++;
         }
+    }
+    #end
+
+    public function show(?volumeStatus:VolumeStatus) {
+        #if !macro
+        __timer = 1;
+        position.y = 0;
+        active = true;
+
+        switch(volumeStatus) {
+            case UP:        Game.sound.play(volumeUpSound);
+            case DOWN:      Game.sound.play(volumeDownSound);
+            case MUTE:      Game.sound.play(muteSound);
+            case UNMUTE:    Game.sound.play(unmuteSound);
+        }
+        __globalVolume = Std.int(Game.sound.volume * 10);
+        #end
     }
 }

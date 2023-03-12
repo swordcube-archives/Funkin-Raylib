@@ -1,6 +1,8 @@
 package engine.math;
 
+#if !macro
 import engine.Sprite;
+#end
 
 class VelocityUtil {
 	/**
@@ -16,7 +18,7 @@ class VelocityUtil {
 	 * @param	Speed		The speed it will move, in pixels per second (default is 60 pixels/sec)
 	 * @param	MaxTime		Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the source will arrive at destination in the given number of ms
 	 */
-	public static function moveTowardsObject(Source:Sprite, Dest:Sprite, Speed:Float = 60, MaxTime:Int = 0):Void {
+	public static function moveTowardsObject(Source:#if !macro Sprite #else Dynamic #end, Dest:#if !macro Sprite #else Dynamic #end, Speed:Float = 60, MaxTime:Int = 0):Void {
 		var a:Float = AngleUtil.angleBetween(Source, Dest);
 
 		if (MaxTime > 0) {
@@ -40,7 +42,7 @@ class VelocityUtil {
 	 * @param	Acceleration	The speed it will accelerate in pixels per second
 	 * @param	MaxSpeed		The maximum speed in pixels per second in which the sprite can move
 	 */
-	public static function accelerateTowardsObject(Source:Sprite, Dest:Sprite, Acceleration:Float, MaxSpeed:Float):Void {
+	public static function accelerateTowardsObject(Source:#if !macro Sprite #else Dynamic #end, Dest:#if !macro Sprite #else Dynamic #end, Acceleration:Float, MaxSpeed:Float):Void {
 		var a:Float = AngleUtil.angleBetween(Source, Dest);
 		accelerateFromAngle(Source, a, Acceleration, MaxSpeed);
 	}
@@ -56,7 +58,7 @@ class VelocityUtil {
 	 * @param	Speed		The speed it will move, in pixels per second (default is 60 pixels/sec)
 	 * @param	MaxTime		Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the source will arrive at destination in the given number of ms
 	 */
-	public static function moveTowardsMouse(Source:Sprite, Speed:Float = 60, MaxTime:Int = 0):Void {
+	public static function moveTowardsMouse(Source:#if !macro Sprite #else Dynamic #end, Speed:Float = 60, MaxTime:Int = 0):Void {
 		var a:Float = AngleUtil.angleBetweenMouse(Source);
 
 		if (MaxTime > 0) {
@@ -82,7 +84,7 @@ class VelocityUtil {
 	 * @param	speed				The speed it will move, in pixels per second (default is 60 pixels/sec)
 	 * @param	maxTime		Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the source will arrive at destination in the given number of ms
 	 */
-	public static function moveTowardsTouch(Source:Sprite, Touch:FlxTouch, Speed:Float = 60, MaxTime:Int = 0):Void {
+	public static function moveTowardsTouch(Source:#if !macro Sprite #else Dynamic #end, Touch:FlxTouch, Speed:Float = 60, MaxTime:Int = 0):Void {
 		var a:Float = AngleUtil.angleBetweenTouch(Source, Touch);
 
 		if (MaxTime > 0) {
@@ -107,7 +109,7 @@ class VelocityUtil {
 	 * @param	Acceleration			The speed it will accelerate in pixels per second
 	 * @param	MaxSpeed		The maximum speed in pixels per second in which the sprite can move
 	 */
-	public static function accelerateTowardsMouse(Source:Sprite, Acceleration:Float, MaxSpeed:Float):Void {
+	public static function accelerateTowardsMouse(Source:#if !macro Sprite #else Dynamic #end, Acceleration:Float, MaxSpeed:Float):Void {
 		var a:Float = AngleUtil.angleBetweenMouse(Source);
 
 		accelerateFromAngle(Source, a, Acceleration, MaxSpeed);
@@ -125,7 +127,7 @@ class VelocityUtil {
 	 * @param	Acceleration	The speed it will accelerate in pixels per second
 	 * @param	MaxSpeed		The maximum speed in pixels per second in which the sprite can move
 	 */
-	public static function accelerateTowardsTouch(Source:Sprite, Touch:FlxTouch, Acceleration:Float, MaxSpeed:Float):Void {
+	public static function accelerateTowardsTouch(Source:#if !macro Sprite #else Dynamic #end, Touch:FlxTouch, Acceleration:Float, MaxSpeed:Float):Void {
 		var a:Float = AngleUtil.angleBetweenTouch(Source, Touch);
 
 		accelerateFromAngle(Source, a, Acceleration, MaxSpeed);
@@ -143,7 +145,7 @@ class VelocityUtil {
 	 * @param	Speed		The speed it will move, in pixels per second (default is 60 pixels/sec)
 	 * @param	MaxTime		Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the source will arrive at destination in the given number of ms
 	 */
-	public static function moveTowardsPoint(Source:Sprite, Target:Point2D, Speed:Float = 60, MaxTime:Int = 0):Void {
+	public static function moveTowardsPoint(Source:#if !macro Sprite #else Dynamic #end, Target:Point2D, Speed:Float = 60, MaxTime:Int = 0):Void {
 		var a:Float = AngleUtil.angleBetweenPoint(Source, Target);
 
 		if (MaxTime > 0) {
@@ -167,7 +169,7 @@ class VelocityUtil {
 	 * @param	Acceleration	The speed it will accelerate in pixels per second
 	 * @param	MaxSpeed		The maximum speed in pixels per second in which the sprite can move
 	 */
-	public static function accelerateTowardsPoint(Source:Sprite, Target:Point2D, Acceleration:Float, MaxSpeed:Float):Void {
+	public static function accelerateTowardsPoint(Source:#if !macro Sprite #else Dynamic #end, Target:Point2D, Acceleration:Float, MaxSpeed:Float):Void {
 		var a:Float = AngleUtil.angleBetweenPoint(Source, Target);
 
 		accelerateFromAngle(Source, a, Acceleration, MaxSpeed);
@@ -193,7 +195,7 @@ class VelocityUtil {
 	 * @param	Speed	The speed it will move, in pixels per second
 	 * @return	An Point2D where Point2D.x contains the velocity x value and Point2D.y contains the velocity y value
 	 */
-	public static function velocityFromFacing(Parent:Sprite, Speed:Float):Point2D {
+	public static function velocityFromFacing(Parent:#if !macro Sprite #else Dynamic #end, Speed:Float):Point2D {
 		return new Point2D().setPolarDegrees(Speed, Parent.facing.degrees);
 	}
 
@@ -240,7 +242,7 @@ class VelocityUtil {
 	 * @param	MaxSpeed		The maximum speed in pixels per second in which the sprite can move
 	 * @param	ResetVelocity	Whether to reset the Sprite velocity to 0 each time
 	 */
-	public static inline function accelerateFromAngle(source:Sprite, radians:Float, acceleration:Float, maxSpeed:Float, resetVelocity:Bool = true):Void {
+	public static inline function accelerateFromAngle(source:#if !macro Sprite #else Dynamic #end, radians:Float, acceleration:Float, maxSpeed:Float, resetVelocity:Bool = true):Void {
 		var sinA = Math.sin(radians);
 		var cosA = Math.cos(radians);
 

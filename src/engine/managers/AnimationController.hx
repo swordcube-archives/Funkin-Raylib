@@ -1,16 +1,15 @@
 package engine.managers;
 
 import engine.Object;
-import engine.utilities.Atlas.FrameData;
+import engine.utilities.Atlas;
+import engine.math.Point2D;
 
 #if !macro
-typedef ParentSprite = Sprite;
-#else
-typedef ParentSprite = Dynamic;
+import engine.Sprite;
 #end
 
 class AnimationController extends Object {
-    private var __parent:ParentSprite;
+    private var __parent:#if !macro Sprite #else Dynamic #end;
     private var __animations:Map<String, Animation> = [];
     
     //** Helper Functions & Variables **//
@@ -150,7 +149,7 @@ class AnimationController extends Object {
 
     private var __elapsedTime:Float = 0;
     
-    public function new(parent:ParentSprite) {
+    public function new(parent:#if !macro Sprite #else Dynamic #end) {
         super();
         this.__parent = parent;
     }

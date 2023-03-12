@@ -1,5 +1,7 @@
 package engine.utilities;
 
+import engine.math.AngleUtil;
+
 /**
  * Uses bit flags to create a list of orthogonal directions.
  */
@@ -27,7 +29,6 @@ package engine.utilities;
 	/**
 	 * Calculates the angle (in degrees) of the facing flags.
 	 * Returns 0 if two opposing flags are true.
-	 * @since 5.0.0
 	 */
 	public var degrees(get, never):Float;
 
@@ -48,7 +49,6 @@ package engine.utilities;
 	/**
 	 * Calculates the angle (in radians) of the facing flags.
 	 * Returns 0 if two opposing flags are true.
-	 * @since 5.0.0
 	 */
 	public var radians(get, never):Float;
 
@@ -103,8 +103,7 @@ package engine.utilities;
 	}
 
 	/**
-	 * Generates a DirectonFlags instance from 4 bools
-	 * @since 5.0.0
+	 * Generates a DirectionFlags instance from 4 bools
 	 */
 	public static function fromBools(left:Bool, right:Bool, up:Bool, down:Bool):DirectionFlags {
 		return (left ? LEFT : NONE) | (right ? RIGHT : NONE) | (up ? UP : NONE) | (down ? DOWN : NONE);

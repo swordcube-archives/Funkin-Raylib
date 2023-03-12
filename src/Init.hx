@@ -8,6 +8,10 @@ class Init extends Scene {
         controls = new Controls();
         Conductor.init();
 
+        Game.signals.preSceneCreate.add(() -> {
+            Conductor.reset();
+        });
+
         Game.switchScene(new scenes.menus.TitleScreen());
     }
 

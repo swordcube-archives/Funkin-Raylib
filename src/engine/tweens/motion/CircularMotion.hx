@@ -1,5 +1,7 @@
 package engine.tweens.motion;
 
+import engine.math.MathUtil;
+
 /**
  * Determines a circular motion.
  */

@@ -1,5 +1,7 @@
 package engine.managers;
 
+import engine.utilities.Timer;
+
 class TimerManager {
     public static var timers:Array<Timer> = [];
 

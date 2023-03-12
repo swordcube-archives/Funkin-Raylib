@@ -34,6 +34,7 @@ class PlayState extends MusicBeatScene {
 
     public var unspawnNotes:Array<Note> = [];
     public var scrollSpeed:Float = 2.7;
+    public var defaultCamZoom:Float = 0.9;
 
     public var scripts:Array<HScript> = [];
 
@@ -56,6 +57,7 @@ class PlayState extends MusicBeatScene {
             script.setParent(this);
             script.call("onCreate");
         }
+        Game.camera.zoom = defaultCamZoom;
 
         Game.sound.list.push(inst = new MusicEx(Paths.songInst(SONG.song), 1, false));
         inst.onComplete = endSong;
@@ -70,7 +72,7 @@ class PlayState extends MusicBeatScene {
         add(playerStrums = new TypedGroup<Receptor>());
 
         add(notes = new NoteField());
-        notes.camera = camHUD;
+        notes.cameras = [camHUD];
 
         var strumY:Float = (SettingsAPI.downscroll) ? Game.height - 160 : 50;
         var receptorOffset:Float = 90;
@@ -78,7 +80,7 @@ class PlayState extends MusicBeatScene {
         for(i in 0...SONG.keyCount) {
             // CPU receptor
             var receptor = new Receptor((Note.swagWidth * i) + receptorOffset, strumY, SONG.keyCount, i);
-            receptor.camera = camHUD;
+            receptor.cameras = [camHUD];
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             cpuStrums.add(receptor);
@@ -89,7 +91,7 @@ class PlayState extends MusicBeatScene {
 
             // Player receptor
             var receptor = new Receptor((Note.swagWidth * i) + ((Game.width * 0.5) + receptorOffset), strumY, SONG.keyCount, i);
-            receptor.camera = camHUD;
+            receptor.cameras = [camHUD];
             receptor.alpha = 0;
             Tween.tween(receptor, {alpha: 1}, 0.5, {ease: Ease.circOut, startDelay: 0.3 * i});
             if(SettingsAPI.botplay) {
@@ -137,6 +139,9 @@ class PlayState extends MusicBeatScene {
             if(Conductor.position >= 0)
                 startSong();
         }
+
+        Game.camera.zoom = MathUtil.lerp(Game.camera.zoom, defaultCamZoom, 0.05, true);
+        camHUD.zoom = MathUtil.lerp(camHUD.zoom, 1, 0.05, true);
 
         if(unspawnNotes[0] != null && !endingSong) {
             while(unspawnNotes[0] != null && unspawnNotes[0].strumTime <= Conductor.position + (2500 / (scrollSpeed / Game.timeScale)))
@@ -205,17 +210,22 @@ class PlayState extends MusicBeatScene {
         }
     }
 
-    override function beatHit(v:Int) {
-        super.beatHit(v);
+    override function beatHit(curBeat:Int) {
+        super.beatHit(curBeat);
 
         if(startingSong || endingSong) return;
 
         call("onBeatHit");
 
-        if (SONG.notes[Math.floor(Conductor.curBeat / 4)].mustHitSection)
+        if (SONG.notes[Math.floor(curBeat / 4)].mustHitSection)
             camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
         else
             camFollow.setPosition(100 + 429 / 2 + 150, 100 + 767 / 2 - 100); // 464.5, 385.5
+
+        if(curBeat % 4 == 0) {
+            Game.camera.zoom += 0.015;
+            camHUD.zoom += 0.03;
+        }
 
         var resyncTime:Float = 20 * Game.timeScale;
         if(Math.abs(Conductor.position - inst.time) > resyncTime || Math.abs(Conductor.position - vocals.time) > resyncTime)

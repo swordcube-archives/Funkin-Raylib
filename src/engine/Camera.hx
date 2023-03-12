@@ -1,7 +1,21 @@
 package engine;
 
+import engine.math.Point2D;
+import engine.math.MathUtil;
+
+#if !macro
+import Rl.Camera2D;
+import Rl.Vector2;
+#else
+typedef Camera2D = Dynamic;
+typedef Vector2 = Dynamic;
+#end
+
 class Camera extends Object {
-    private var __rlCamera:Rl.Camera2D;
+    private var __rlCamera:Camera2D;
+
+    public static var currentCamera:Camera;
+    public static var defaultCameras:Array<Camera>;
 
     public var renderQueue:Array<Void->Void> = [];
 
@@ -14,12 +28,14 @@ class Camera extends Object {
 
     public function new(?zoom:Float = 1.0) {
         super();
+        #if !macro
         __rlCamera = Rl.RlCamera2D.create(
-            Rl.Vector2.create(Game.width * 0.5, Game.height * 0.5),
-            Rl.Vector2.create(Game.width * 0.5, Game.height * 0.5),
+            Vector2.create(Game.width * 0.5, Game.height * 0.5),
+            Vector2.create(Game.width * 0.5, Game.height * 0.5),
             angle,
             zoom
         );
+        #end
         this.initialZoom = this.zoom = zoom;
     }
 
@@ -28,11 +44,15 @@ class Camera extends Object {
      * @param width 
      * @param height 
      */
-    public function getCamOffsets(width:Int, height:Int) {
-        return Rl.Vector2.create(
+    public function getCamOffsets(width:Int, height:Int):Vector2 {
+        #if !macro
+        return Vector2.create(
             -0.5 * (width * Math.abs(zoom) - width),
             -0.5 * (height * Math.abs(zoom) - height)
         );
+        #else
+        return null;
+        #end
     }
 
     /**
@@ -42,10 +62,29 @@ class Camera extends Object {
      * @param camY The camera y offset.
      * @param scrollFactor The factor to multiply to create a parallax effect.
      */
-    public function adjustToCamera(vec:Rl.Vector2, camX:Float, camY:Float, scrollFactor:Point2D) {
+    public function adjustToCamera(vec:Vector2, camX:Float, camY:Float, scrollFactor:Point2D):Vector2 {
+        #if !macro
         vec.x += -camX - renderPos.x * scrollFactor.x;
         vec.y += -camY - renderPos.y * scrollFactor.y;
         return vec;
+        #else
+        return null;
+        #end
+    }
+
+    /**
+     * Corrects a `Vector2` to the camera's zoom.
+     * @param position The vector to correct.
+     */
+    public function correctToZoom(position:Vector2):Vector2 {
+        #if !macro
+        return Vector2.create(
+            (position.x / zoom - Game.width * 0.5) * zoom + Game.width * 0.5,
+            (position.y / zoom - Game.height * 0.5) * zoom + Game.height * 0.5
+        );
+        #else
+        return null;
+        #end
     }
 
     override function update(elapsed:Float) {
@@ -61,6 +100,13 @@ class Camera extends Object {
         var cos = Math.cos(angle / 180 * MathUtil.STANDARD_PI);
         renderPos.x = (scroll.x * cos + scroll.y * sin) * zoom;
         renderPos.y = (scroll.x * -sin + scroll.y * cos) * zoom;
+    }
+
+    override function draw() {
+        super.draw();
+        for(drawCall in renderQueue)
+            drawCall();
+        renderQueue = [];
     }
 }
 

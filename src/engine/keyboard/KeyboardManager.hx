@@ -1,7 +1,7 @@
 package engine.keyboard;
 
-#if !macro
 class KeyboardManager {
+    #if !macro
     public var justPressed(get, never):Int->Bool;
     private function get_justPressed() {
         return (key:Int) -> {
@@ -87,7 +87,7 @@ class KeyboardManager {
         }
         return false;
     }
+    #end
 
     public function new() {}
 }
-#end

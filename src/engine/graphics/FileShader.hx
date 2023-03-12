@@ -2,17 +2,24 @@ package engine.graphics;
 
 import engine.graphics.GlBindings;
 
+/**
+ * Runs a shader from a file.
+ * Can currently be applied to `Sprite` objects.
+ */
 class FileShader implements engine.interfaces.IDestroyable {
-    public var actualShader:Rl.Shader;
+    public var actualShader:#if !macro Rl.Shader #else Dynamic #end;
 
     public function new(fragFilePath:String, ?vertexFilePath:String) {
+        #if !macro
         Rl.setTraceLogLevel(Rl.TraceLogLevel.FATAL);
         actualShader = Rl.loadShader(vertexFilePath, fragFilePath);
         Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
+        #end
     }
 
     public var failedToFind:Array<String> = [];
     public function setUniform(varName:String, value:Dynamic) {
+        #if !macro
         if (failedToFind.contains(varName))
             return;
 
@@ -43,10 +50,13 @@ class FileShader implements engine.interfaces.IDestroyable {
             default:
                 Rl.traceLog(Rl.TraceLogLevel.WARNING, 'Variable type $varType currently not supported.');
         }
+        #end
     }
 
     public function destroy() {
+        #if !macro
         Rl.unloadShader(actualShader);
         failedToFind = null;
+        #end
     }
 }

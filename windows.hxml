@@ -12,11 +12,8 @@
 --define hscriptPos
 --define HXCPP_CHECK_POINTER
 --define HXCPP_STACK_LINE
---dce no
-
---define HXCPP_CHECK_POINTER
---define HXCPP_STACK_LINE
 --define HXCPP_DEBUG_LINK
+--dce no
 
 # Copying the assets from source code to bin folder
 --cmd Xcopy assets\ bin\cpp\assets\ /E /H /C /I /Y

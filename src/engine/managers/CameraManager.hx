@@ -10,17 +10,16 @@ class CameraManager {
             for(camera in list)
                 camera.update(elapsed);
         });
-
-        Game.signals.preSceneCreate.add(reset);
     }
 
-    public function reset() {
+    public function init() {
         Logs.trace("Clearing cameras...", ENGINE);
         for(camera in list) {
             camera.kill();
             camera.destroy();
         }
         list = [];
+        Camera.defaultCameras = [Game.camera];
     }
 
     public function add(camera:Camera) {

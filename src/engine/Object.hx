@@ -1,21 +1,50 @@
 package engine;
 
-class Object extends Basic {
-	private var __camera:Camera;
+import engine.math.Point2D;
+import engine.math.VelocityUtil;
 
+/**
+ * The base object that classes like `Sprite`, `Group`, `Camera`, and more are based on.
+ * Provides camera variables, velocity, update and draw functions
+ */
+class Object extends Basic {
+	/**
+	 * The first camera this object can draw to.
+	 */
 	public var camera(get, set):Camera;
 
-	private function get_camera():Camera {
-		if(__camera != null)
-			return __camera;
+	/**
+	 * The list of every camera this object can draw to.
+	 */
+	public var cameras(get, set):Array<Camera>;
 
-		return Game.camera;
+	private var _camera:Camera;
+	private var _cameras:Array<Camera>;
+
+	@:noCompletion
+	function get_camera():Camera {
+		return (_cameras == null || _cameras.length == 0) ? Camera.defaultCameras[0] : _cameras[0];
 	}
 
-	private function set_camera(v:Camera):Camera {
-		return __camera = v;
+	@:noCompletion
+	function set_camera(Value:Camera):Camera {
+		if (_cameras == null)
+			_cameras = [Value];
+		else
+			_cameras[0] = Value;
+		return Value;
 	}
-	
+
+	@:noCompletion
+	function get_cameras():Array<Camera> {
+		return (_cameras == null) ? Camera.defaultCameras : _cameras;
+	}
+
+	@:noCompletion
+	function set_cameras(Value:Array<Camera>):Array<Camera> {
+		return _cameras = Value;
+	}
+
 	/**
 	 * Whether or not this object is movable.
 	 */
@@ -23,8 +52,14 @@ class Object extends Basic {
 
 	/**
 	 * Whether or not this object gets affected by velocity.
+	 * Set this to `false` for a small performance boost.
 	 */
 	public var moves:Bool = true;
+
+	/**
+	 * Whether or not this object can draw to the screen.
+	 */
+	public var visible:Bool = true;
 
 	/**
 	 * The X and Y position of the object.
@@ -80,10 +115,12 @@ class Object extends Basic {
 	 */
 	public var x(get, set):Float;
 
+	@:noCompletion
 	private function get_x():Float {
 		return position.x;
 	}
 
+	@:noCompletion
 	private function set_x(v:Float):Float {
 		return position.x = v;
 	}
@@ -94,10 +131,12 @@ class Object extends Basic {
 	 */
 	public var y(get, set):Float;
 
+	@:noCompletion
 	private function get_y():Float {
 		return position.y;
 	}
 
+	@:noCompletion
 	private function set_y(v:Float):Float {
 		return position.y = v;
 	}
@@ -112,15 +151,18 @@ class Object extends Basic {
 	}
 
 	public function new(?x:Float = 0, ?y:Float = 0) {
-        super();
+		super();
 		position.set(x, y);
 	}
 
-    public var angle:Float = 0;
+	/**
+	 * How much the object should rotate when shown on screen. (in degrees)
+	 */
+	public var angle:Float = 0;
 
 	override function update(elapsed:Float) {
-        updateMotion(elapsed);
-    }
+		updateMotion(elapsed);
+	}
 
 	/**
 	 * Internal function for updating the position and speed of this object.
@@ -130,7 +172,7 @@ class Object extends Basic {
 	@:noCompletion
 	function updateMotion(elapsed:Float):Void {
 		if(position == null || !moves) return;
-		
+
 		var velocityDelta = 0.5 * (VelocityUtil.computeVelocity(angularVelocity, angularAcceleration, angularDrag, maxAngular, elapsed) - angularVelocity);
 		angularVelocity += velocityDelta;
 		angle += angularVelocity * elapsed;
@@ -148,9 +190,9 @@ class Object extends Basic {
 		velocity.y += velocityDelta;
 		position.y += delta;
 	}
-    
+
 	override function destroy() {
 		position = null;
-        super.destroy();
+		super.destroy();
 	}
 }
