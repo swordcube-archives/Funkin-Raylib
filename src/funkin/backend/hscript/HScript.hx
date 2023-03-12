@@ -103,6 +103,8 @@ class HScript implements IDestroyable {
      * @param parameters (Optional) The parameters of the function.
      */
     public function call(method:String, ?parameters:Array<Dynamic>):Dynamic {
+        if(interp == null) return null;
+
         // If this function doesn't exist, don't try to run it.
         if(!interp.variables.exists(method)) return null;
 
