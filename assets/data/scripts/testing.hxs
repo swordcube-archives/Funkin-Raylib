@@ -1,11 +1,16 @@
+import funkin.song.Conductor;
+
 var ogY:Float = 0;
 var sineShit:Float = 0;
 
-function onCreate() {
+function onCreatePost() {
     ogY = playerStrums.members[0].y;
+
+    camHUD.zoom = 0.5;
 }
 
 function onUpdate(elapsed:Float) {
+    camHUD.angle += elapsed * 5;
     sineShit += elapsed * 2;
     var i:Int = 0;
     playerStrums.forEachAlive((receptor:Receptor) -> {

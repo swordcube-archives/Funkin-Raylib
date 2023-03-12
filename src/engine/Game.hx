@@ -97,7 +97,7 @@ class Game {
 		signals.postSceneCreate.dispatch();
 	}
 
-	public function new(title:String, width:Int = 1280, height:Int = 720, framerate:Int = 60, initialScene:Class<Scene>) {
+	public function new(title:String, width:Int = 1280, height:Int = 720, framerate:Int = 60, initialScene:Class<Scene>, ?skipSplash:Bool = false) {
 		Game.width = width;
 		Game.height = height;
 		Game.framerate = framerate;
@@ -122,7 +122,10 @@ class Game {
 		Game.random.resetInitialSeed();
 
 		Game.initialScene = initialScene;
-		Game.switchScene(Type.createInstance(initialScene, []));
+		if (skipSplash)
+			Game.switchScene(Type.createInstance(initialScene, []));
+		else
+			Game.switchScene(new engine.SplashScene());
 
 		start();
 	}

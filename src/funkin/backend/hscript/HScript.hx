@@ -57,6 +57,7 @@ class HScript implements IDestroyable {
         set("Sprite", Sprite);
         set("Init", Init);
         set("Paths", Paths);
+        set("Std", Std);
         set("Math", Math);
         set("MathUtil", MathUtil);
         set("Timer", Timer);
