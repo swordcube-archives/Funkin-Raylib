@@ -70,6 +70,7 @@ class PlayState extends MusicBeatScene {
         add(playerStrums = new TypedGroup<Receptor>());
 
         add(notes = new NoteField());
+        notes.camera = camHUD;
 
         var strumY:Float = (SettingsAPI.downscroll) ? Game.height - 160 : 50;
         var receptorOffset:Float = 90;
@@ -101,8 +102,6 @@ class PlayState extends MusicBeatScene {
         }
 
         unspawnNotes = ChartParser.parseNotes(SONG);
-        for (note in unspawnNotes)
-            note.camera = camHUD;
 
         camFollow = new Object(0, 0);
         camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
