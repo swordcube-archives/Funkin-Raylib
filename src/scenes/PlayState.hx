@@ -104,6 +104,7 @@ class PlayState extends MusicBeatScene {
         unspawnNotes = ChartParser.parseNotes(SONG);
 
         camFollow = new Object(0, 0);
+        camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
         Game.camera.target = camFollow;
         Game.camera.followLerp = 0.04;
         

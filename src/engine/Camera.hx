@@ -3,6 +3,8 @@ package engine;
 class Camera extends Object {
     private var __rlCamera:Rl.Camera2D;
 
+    public var renderQueue:Array<Void->Void> = [];
+
     public var target:Object = null;
     public var scroll:Point2D = new Point2D();
     public var renderPos:Point2D = new Point2D();
