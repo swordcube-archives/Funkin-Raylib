@@ -284,8 +284,7 @@ class Sprite extends Object {
 		var ogAngle:Float = angle;
 		angle %= 360;
 
-		var camX:Float = -0.5 * (width * Math.abs(camera.zoom) - width);
-		var camY:Float = -0.5 * (height * Math.abs(camera.zoom) - height);
+		var camOffset:Rl.Vector2 = camera.getCamOffsets(width, height);
 
 		scale.x *= camera.zoom;
 		scale.y *= camera.zoom;
@@ -303,6 +302,7 @@ class Sprite extends Object {
 
             // TODO: fix all of this to work with negative scales correctly
             // (it should just display the sprite but flipped on x and/or y axis)
+			//hi i sorta fixed this :D -srt
 
 			// draw the thing
 			@:privateAccess {
@@ -337,14 +337,14 @@ class Sprite extends Object {
 					increments[1] = cos * -1;
 				}
 				var frameOffsetCoords = [
-					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camX) * cos + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camY) * (sin + increments[0]),
-					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camX) * -sin + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camY) * (cos + increments[1])
+					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * cos + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (sin + increments[0]),
+					(-frameData.frameX * Math.abs(scale.x) - animOffsetX * Math.abs(scale.x) + camOffset.x) * -sin + (-frameData.frameY * Math.abs(scale.y) - animOffsetY * Math.abs(scale.y) + camOffset.y) * (cos + increments[1])
 				];
 
-				var adjustedPos = Rl.Vector2.create(
+				var adjustedPos:Rl.Vector2 = camera.adjustToCamera(Rl.Vector2.create(
 					(x + frameOffsetCoords[0]) + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))), 
 					(y + frameOffsetCoords[1]) + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-				);
+				), camOffset.x, camOffset.y, scrollFactor);
 				Rl.drawTexturePro(texture, // the texture (woah)
 					Rl.Rectangle.create(
             			frameData.x, 
@@ -353,8 +353,8 @@ class Sprite extends Object {
             			frameData.height * (scale.y < 0 ? -1 : 1)
         			), // the coordinates of x, y, width, and height FROM the image
 					Rl.Rectangle.create(
-            			adjustedPos.x - camX + camera.renderPos.x * scrollFactor.x,
-						adjustedPos.y - camY + camera.renderPos.y * scrollFactor.y,
+            			adjustedPos.x,
+						adjustedPos.y,
             			frameData.width * Math.abs(scale.x),
 						frameData.height * Math.abs(scale.y)
         			), // where we want to display it on screen + how big it should be
@@ -368,10 +368,10 @@ class Sprite extends Object {
 			}
 		} else {
 			@:privateAccess
-			var adjustedPos = Rl.Vector2.create(
+			var adjustedPos = camera.adjustToCamera(Rl.Vector2.create(
 				x + (origin.x + (-0.5 * ((frameWidth * Math.abs(scale.x)) - frameWidth))),
 				y + (origin.y + (-0.5 * ((frameHeight * Math.abs(scale.y)) - frameHeight)))
-			);
+			), camOffset.x, camOffset.y, scrollFactor);
 
 			texture.width = Std.int(frameWidth * scale.x);
 			texture.height = Std.int(frameHeight * scale.y);
@@ -379,8 +379,8 @@ class Sprite extends Object {
                 texture, 
                 Rl.Rectangle.create(0, 0, MathUtil.absInt(texture.width), MathUtil.absInt(texture.height)),
                 Rl.Rectangle.create(
-					adjustedPos.x - camX + camera.renderPos.x * scrollFactor.x,
-					adjustedPos.y - camY + camera.renderPos.y * scrollFactor.y,
+					adjustedPos.x,
+					adjustedPos.y,
                     MathUtil.absInt(texture.width), 
                     MathUtil.absInt(texture.height)
                 ),

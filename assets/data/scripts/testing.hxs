@@ -2,38 +2,20 @@ import funkin.song.Conductor;
 
 var ogY:Float = 0;
 var sineShit:Float = 0;
-var gfDance:Sprite;
 
 function onCreatePost() {
     ogY = playerStrums.members[0].y;
 
-    camHUD.zoom = 0.7;
-
-    gfDance = new Sprite(Game.width * 0.5, Game.height * 0.5);
-    gfDance.frames = Paths.getSparrowAtlas("menus/title/gfDanceTitle");
-    gfDance.animation.addByIndices("danceLeft", "gfDance", [for(i in 0...15) i], 24, false);
-    gfDance.animation.addByIndices("danceRight", "gfDance", [for(i in 15...30) i], 24, false);
-    gfDance.animation.play("danceLeft");
-    gfDance.x -= gfDance.width / 2;
-    gfDance.y -= gfDance.height / 2;
-    gfDance.camera = camHUD;
-    gfDance.scale.set(-1, -1);
-    gfDance.updateHitbox();
-    add(gfDance);
+    camHUD.zoom = 0.5;
 }
 
 function onUpdate(elapsed:Float) {
-    gfDance.angle += elapsed * 25;
     camHUD.angle += elapsed * 5;
     sineShit += elapsed * 2;
     var i:Int = 0;
     playerStrums.forEachAlive((receptor:Receptor) -> {
         receptor.angle += Game.elapsed * 50;
-        //receptor.y = ogY + (Math.sin(sineShit + i) * 40);
+        receptor.y = ogY + (Math.sin(sineShit + i) * 40);
         i++;
     });
-}
-
-function onBeatHit() {
-    gfDance.animation.play((Conductor.curBeat % 2 == 0) ? "danceRight" : "danceLeft");
 }
