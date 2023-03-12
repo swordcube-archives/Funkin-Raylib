@@ -29,18 +29,30 @@ class TypedGroup<T:Object> extends Object {
         }
     }
 
+    public function queueDraw() {
+        for(member in members) {
+            if(member == null || !member.alive) continue;
+            
+            if (member is TypedGroup)
+                cast(member, TypedGroup<Dynamic>).queueDraw();
+            else
+                member.camera.renderQueue.push(member.draw);
+        }
+    }
+
     override function draw() {
         var cameraList = Game.cameras.list.copy();
         cameraList.insert(0, Game.camera);
+
+        queueDraw();
 
         for(camera in cameraList) { 
             @:privateAccess
             Rl.beginMode2D(camera.__rlCamera);
 
-            for(member in members) {
-                if(member == null || !member.alive || member.camera != camera) continue;
-                member.draw();
-            }
+            for (drawFunc in camera.renderQueue)
+                drawFunc();
+            camera.renderQueue = [];
 
             Rl.endMode2D();
         }

@@ -105,6 +105,7 @@ class PlayState extends MusicBeatScene {
             note.camera = camHUD;
 
         camFollow = new Object(0, 0);
+        camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
         Game.camera.target = camFollow;
         Game.camera.followLerp = 0.04;
         
@@ -163,7 +164,6 @@ class PlayState extends MusicBeatScene {
                 ratingSpr.acceleration.y = 550;
                 ratingSpr.velocity.y = -Game.random.int(140, 175);
                 ratingSpr.velocity.x = -Game.random.int(0, 10);
-                ratingSpr.camera = camHUD;
                 add(ratingSpr);
 
                 Tween.tween(ratingSpr, {alpha: 0}, 0.2, {

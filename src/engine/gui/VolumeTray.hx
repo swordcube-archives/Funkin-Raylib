@@ -17,10 +17,10 @@ class VolumeTray extends Object {
     private var __globalVolume:Int = Std.int(Game.sound.volume * 10);
     private var __timer:Float = 0;
 
-    public var volumeDownSound:String = "engine/beep";
-    public var volumeUpSound:String = "engine/beep";
-    public var muteSound:String = "engine/beep";
-    public var unmuteSound:String = "engine/beep";
+    public var volumeDownSound:String = "./assets/droplet/sounds/beep.ogg";
+    public var volumeUpSound:String = "./assets/droplet/sounds/beep.ogg";
+    public var muteSound:String = "./assets/droplet/sounds/beep.ogg";
+    public var unmuteSound:String = "./assets/droplet/sounds/beep.ogg";
 
     public var volumeDownKeys:Array<Int> = [Keys.MINUS, Keys.NUMPAD_MINUS];
     public var volumeUpKeys:Array<Int> = [Keys.PLUS, Keys.NUMPAD_PLUS];
@@ -80,10 +80,10 @@ class VolumeTray extends Object {
         active = true;
 
         switch(volumeStatus) {
-            case UP:        Game.sound.play(Paths.sound("engine/beep"));
-            case DOWN:      Game.sound.play(Paths.sound("engine/beep"));
-            case MUTE:      Game.sound.play(Paths.sound("engine/beep"));
-            case UNMUTE:    Game.sound.play(Paths.sound("engine/beep"));
+            case UP:        Game.sound.play(volumeUpSound);
+            case DOWN:      Game.sound.play(volumeDownSound);
+            case MUTE:      Game.sound.play(muteSound);
+            case UNMUTE:    Game.sound.play(unmuteSound);
         }
         __globalVolume = Std.int(Game.sound.volume * 10);
     }
