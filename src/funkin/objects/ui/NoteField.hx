@@ -2,6 +2,9 @@ package funkin.objects.ui;
 
 import scenes.PlayState;
 import engine.Group.TypedGroup;
+import engine.Game;
+import engine.math.AngleUtil;
+import engine.math.MathUtil;
 
 class NoteField extends TypedGroup<Note> {
     public var game = PlayState.current;

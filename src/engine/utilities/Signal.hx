@@ -5,17 +5,10 @@ import haxe.macro.Expr;
 #else
 import engine.interfaces.IDestroyable;
 
-/**
- * `FlxSignal` but ported to this shitty raylib engine.
- * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/util/FlxSignal.hx
- */
 typedef Signal = TypedSignal<Void->Void>;
 
-/**
- * `FlxTypedSignal` but ported to this shitty raylib engine.
- * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/util/FlxSignal.hx
- */
-@:multiType abstract TypedSignal<T>(ISignal<T>) {
+@:multiType
+abstract TypedSignal<T>(ISignal<T>) {
 	public var dispatch(get, never):T;
 
 	public function new();

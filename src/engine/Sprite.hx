@@ -1,5 +1,7 @@
 package engine;
 
+import engine.math.MathUtil;
+import engine.utilities.DirectionFlags;
 import engine.utilities.AssetCache.CacheMap;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;

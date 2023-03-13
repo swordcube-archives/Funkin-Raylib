@@ -1,5 +1,6 @@
 package engine.managers;
 
+import engine.utilities.Logs;
 import engine.utilities.Timer;
 
 class TimerManager {

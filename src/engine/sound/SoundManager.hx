@@ -1,6 +1,7 @@
 package engine.sound;
 
 import engine.interfaces.ISound;
+import engine.utilities.Logs;
 
 class SoundManager {
     public var music:MusicEx;

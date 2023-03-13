@@ -4,6 +4,7 @@ import sys.io.File;
 import sys.FileSystem;
 import haxe.Json;
 import funkin.song.SongFormat.SongData;
+import engine.utilities.Logs;
 
 class Song {
 	public static final fallbackSong:SongData = {

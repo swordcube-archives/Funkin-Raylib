@@ -1,13 +1,18 @@
 package funkin.backend.hscript;
 
+import engine.Game;
 import engine.tweens.Ease;
 import engine.tweens.Tween;
 import haxe.io.Path;
 import engine.interfaces.IDestroyable;
+import engine.utilities.Logs;
+import engine.utilities.Assets;
 
 import hscript.Parser;
 import hscript.Expr;
 import hscript.Interp;
+
+using engine.utilities.ArrayUtil;
 
 /**
  * The class for a script/modchart.
@@ -53,17 +58,35 @@ class HScript implements IDestroyable {
      * This function sets up default variables for this script.
      */
     public function preset() {
-        set("Game", Game);
-        set("Sprite", Sprite);
-        set("Init", Init);
-        set("Paths", Paths);
-        set("Std", Std);
-        set("Math", Math);
-        set("MathUtil", MathUtil);
-        set("Timer", Timer);
-        set("Assets", Assets);
-        set("Tween", Tween);
-        set("Ease", Ease);
+        // Haxe [Classes]
+        setClass(Std);
+        setClass(Math);
+        setClass(StringTools);
+        setClass(DateTools);
+        setClass(Reflect);
+        setClass(Type);
+
+        // Haxe [Abstracts]
+        set("String", String);
+        set("Bool", Bool);
+        set("Float", Float);
+        set("Int", Int);
+        set("Float", Float);
+        set("Array", Array);
+        set("Dynamic", Dynamic);
+
+        // Droplet
+        setClass(engine.Game);
+        setClass(engine.Sprite);
+        setClass(engine.math.MathUtil);
+        setClass(engine.utilities.Timer);
+        setClass(engine.utilities.Assets);
+        setClass(engine.tweens.Tween);
+        setClass(engine.tweens.Ease);
+
+        // Funkin
+        setClass(Init);
+        setClass(funkin.helpers.Paths);
     }
 
     /**
@@ -93,6 +116,16 @@ class HScript implements IDestroyable {
     public function set(variable:String, value:Dynamic) {
         if(interp == null) return;
         interp.variables.set(variable, value);
+    }
+
+    /**
+     * Acts like the `set` function but the class name is obtained
+     * automatically instead of using the `variable` argument.
+     * @param value 
+     */
+    public function setClass(value:Class<Dynamic>) {
+        if(interp == null) return;
+        interp.variables.set(Type.getClassName(Type.getClass(value)).split(".").last(), value);
     }
 
     /**

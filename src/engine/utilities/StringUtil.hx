@@ -1,5 +1,6 @@
 package engine.utilities;
 
+import engine.math.MathUtil;
 import engine.utilities.typeLimit.OneOfTwo;
 
 class StringUtil {
@@ -153,7 +154,7 @@ class StringUtil {
 	 * value is below 1024. Example: formatBytes(123456789); -> 117.74MB
 	 */
 	public static function formatBytes(Bytes:Float, Precision:Int = 2):String {
-		var units:Array<String> = ["Bytes", "kB", "MB", "GB", "TB", "PB"];
+		var units:Array<String> = ["B", "KB", "MB", "GB", "TB", "PB"];
 		var curUnit = 0;
 		while (Bytes >= 1024 && curUnit < units.length - 1) {
 			Bytes /= 1024;

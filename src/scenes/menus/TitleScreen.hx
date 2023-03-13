@@ -3,6 +3,8 @@ package scenes.menus;
 import scenes.MusicBeat.MusicBeatScene;
 import engine.keyboard.Keys;
 import engine.Sprite;
+import engine.Game;
+import engine.utilities.Timer;
 
 class TitleScreen extends MusicBeatScene {
     var logo:Sprite;

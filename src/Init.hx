@@ -1,5 +1,8 @@
 package;
 
+import engine.Game;
+import engine.Scene;
+
 class Init extends Scene {
     public static var controls:Controls;
     

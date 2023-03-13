@@ -1,5 +1,7 @@
 package engine.utilities;
 
+using engine.utilities.StringUtil;
+
 enum abstract LogType(Int) from Int to Int {
     var INFO = 0;
     var WARNING = 1;

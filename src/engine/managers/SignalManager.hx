@@ -1,8 +1,6 @@
 package engine.managers;
 
-#if !macro
 import engine.utilities.Signal;
-#end
 
 class SignalManager {
     public var preSceneCreate:#if !macro Signal = new Signal(); #else Dynamic = null; #end

@@ -3,6 +3,9 @@ package scenes.menus;
 import engine.Group.TypedGroup;
 import scenes.MusicBeat.MusicBeatScene;
 import engine.keyboard.Keys;
+import engine.Sprite;
+import engine.Game;
+import engine.math.MathUtil;
 
 class MainMenu extends MusicBeatScene {
     public var bg:Sprite;

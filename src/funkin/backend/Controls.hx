@@ -1,6 +1,7 @@
 package funkin.backend;
 
 import engine.keyboard.Keys;
+import engine.Game;
 
 class Controls {
     public static var controlsList:Map<String, Array<Int>> = [

@@ -1,5 +1,8 @@
 package scenes;
 
+import engine.Game;
+import engine.Scene;
+import engine.keyboard.Keys;
 import funkin.interfaces.IMusicHandler;
 
 class MusicBeatScene extends Scene implements IMusicHandler {

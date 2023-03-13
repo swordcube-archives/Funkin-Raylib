@@ -1,5 +1,7 @@
 package engine.managers;
 
+import engine.utilities.Logs;
+
 class CameraManager {
     public var list:Array<Camera> = [];
 

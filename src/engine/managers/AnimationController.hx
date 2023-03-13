@@ -3,6 +3,7 @@ package engine.managers;
 import engine.Object;
 import engine.utilities.Atlas;
 import engine.math.Point2D;
+import engine.utilities.Logs;
 
 #if !macro
 import engine.Sprite;

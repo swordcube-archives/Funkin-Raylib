@@ -1,5 +1,6 @@
 package funkin.song;
 
+import engine.Game;
 import engine.sound.MusicEx;
 import engine.sound.SoundEx;
 import scenes.PlayState;

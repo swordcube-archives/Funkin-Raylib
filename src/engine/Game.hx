@@ -1,16 +1,15 @@
 package engine;
 
-import engine.managers.CameraManager;
 import sys.thread.Thread;
 import engine.tweens.Tween;
 import engine.gui.VolumeTray;
-import engine.managers.TimerManager;
-import engine.managers.SignalManager;
 import engine.sound.SoundManager;
 import engine.keyboard.KeyboardManager;
+import engine.keyboard.Keys;
 import engine.Scene;
 import engine.utilities.AssetCache;
 import engine.math.Random;
+import engine.math.MathUtil;
 import engine.managers.*;
 
 #if !macro
@@ -135,7 +134,7 @@ class Game {
 
 		Rl.setTraceLogLevel(Rl.TraceLogLevel.WARNING);
 		Rl.initWindow(width, height, title);
-		Rl.setWindowState(4);
+		Rl.setWindowState(Rl.ConfigFlags.WINDOW_RESIZABLE);
         Rl.setTargetFPS(framerate);
 		Rl.initAudioDevice();
 		Rl.setWindowIcon(Rl.loadImage(Paths.image("gameIcon")));
@@ -179,6 +178,7 @@ class Game {
 			// and have to be casted to be used
 			// otherwise c++ compiler errors happen :3
 			var bullShit = cast(renderTex.texture, Texture2D);
+			bullShit.format = 1;
 
 			Rl.beginDrawing();
 

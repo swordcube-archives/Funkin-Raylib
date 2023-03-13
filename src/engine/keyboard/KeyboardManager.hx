@@ -1,5 +1,7 @@
 package engine.keyboard;
 
+import engine.keyboard.Keys;
+
 class KeyboardManager {
     #if !macro
     public var justPressed(get, never):Int->Bool;

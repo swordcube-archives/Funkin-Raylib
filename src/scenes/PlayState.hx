@@ -12,6 +12,12 @@ import scenes.MusicBeat.MusicBeatScene;
 import scenes.menus.*;
 import engine.sound.MusicEx;
 import funkin.song.SongFormat.SongData;
+import engine.utilities.Timer;
+import engine.math.MathUtil;
+import engine.Camera;
+import engine.Object;
+import engine.Game;
+import engine.Sprite;
 
 class PlayState extends MusicBeatScene {
     public static var current:PlayState;

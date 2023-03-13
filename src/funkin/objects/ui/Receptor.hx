@@ -1,5 +1,7 @@
 package funkin.objects.ui;
 
+import engine.Sprite;
+
 class Receptor extends Sprite {
     public var NOTE_SIZE:Float = 156;
 

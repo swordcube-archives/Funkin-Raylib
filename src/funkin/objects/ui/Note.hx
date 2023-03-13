@@ -1,5 +1,7 @@
 package funkin.objects.ui;
 
+import engine.Game;
+import engine.Sprite;
 import scenes.PlayState;
 import engine.Group.TypedGroup;
 
