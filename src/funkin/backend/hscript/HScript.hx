@@ -125,7 +125,8 @@ class HScript implements IDestroyable {
      */
     public function setClass(value:Class<Dynamic>) {
         if(interp == null) return;
-        interp.variables.set(Type.getClassName(Type.getClass(value)).split(".").last(), value);
+        var className:String = Type.getClassName(value).split(".").last();
+        interp.variables.set(className, value);
     }
 
     /**
