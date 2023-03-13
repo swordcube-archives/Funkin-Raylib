@@ -18,6 +18,8 @@ class TypedGroup<T:Object> extends Object {
 	public function new(?maxSize:Int = 0) {
 		super();
 		this.maxSize = maxSize;
+		memberAdded = new TypedSignal<T->Void>();
+		memberRemoved = new TypedSignal<T->Void>();
 	}
 
 	public var members:Array<T> = [];
@@ -32,12 +34,12 @@ class TypedGroup<T:Object> extends Object {
 	/**
 	 * A `Signal` that dispatches when a child is added to this group.
 	 */
-	public var memberAdded:TypedSignal<T->Void> = new TypedSignal<T->Void>();
+	public var memberAdded:TypedSignal<T->Void>;
 
 	/**
 	 * A `Signal` that dispatches when a child is removed from this group.
 	 */
-	public var memberRemoved:TypedSignal<T->Void> = new TypedSignal<T->Void>();
+	public var memberRemoved:TypedSignal<T->Void>;
 
 	/**
 	 * Internal helper variable for recycling objects.
@@ -153,7 +155,8 @@ class TypedGroup<T:Object> extends Object {
 	 */
 	public function remove(object:T) {
 		var index:Int = members.indexOf(object);
-		if(index == -1) return object;
+		if (index == -1)
+			return object;
 
 		members.remove(object);
 
@@ -181,7 +184,7 @@ class TypedGroup<T:Object> extends Object {
 
 		if (memberRemoved != null)
 			memberRemoved.dispatch(OldObject);
-		
+
 		if (memberAdded != null)
 			memberAdded.dispatch(NewObject);
 
@@ -472,5 +475,41 @@ class TypedGroup<T:Object> extends Object {
 	 */
 	public function clear() {
 		members = [];
+	}
+
+	/**
+	 * Iterates through every member.
+	 */
+	public inline function iterator(?filter:T->Bool):TypedGroupIterator<T> {
+		return new TypedGroupIterator<T>(members, filter);
+	}
+}
+
+/**
+ * `FlxTypedGroupIterator` ported to this shitty raylib engine.
+ * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/group/FlxGroup.hx#L922
+ */
+class TypedGroupIterator<T> {
+	var _groupMembers:Array<T>;
+	var _filter:T->Bool;
+	var _cursor:Int;
+	var _length:Int;
+
+	public function new(GroupMembers:Array<T>, ?filter:T->Bool) {
+		_groupMembers = GroupMembers;
+		_filter = filter;
+		_cursor = 0;
+		_length = _groupMembers.length;
+	}
+
+	public function next() {
+		return hasNext() ? _groupMembers[_cursor++] : null;
+	}
+
+	public function hasNext():Bool {
+		while (_cursor < _length && (_groupMembers[_cursor] == null || _filter != null && !_filter(_groupMembers[_cursor]))) {
+			_cursor++;
+		}
+		return _cursor < _length;
 	}
 }

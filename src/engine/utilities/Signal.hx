@@ -2,7 +2,8 @@ package engine.utilities;
 
 #if macro
 import haxe.macro.Expr;
-#else
+#end
+import engine.utilities.DestroyUtil;
 import engine.interfaces.IDestroyable;
 
 typedef Signal = TypedSignal<Void->Void>;
@@ -223,7 +224,6 @@ interface ISignal<T> extends IDestroyable {
 	function removeAll():Void;
 	function has(listener:T):Bool;
 }
-#end
 
 private class Macro {
 	public static macro function buildDispatch(exprs:Array<Expr>):Expr {
