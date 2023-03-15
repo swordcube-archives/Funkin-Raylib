@@ -172,13 +172,13 @@ class Game {
 
 		var fpsFont:Font = Rl.loadFont(Paths.font("vcr.ttf"));
 		var renderTex:RenderTexture2D = Rl.loadRenderTexture(Game.width, Game.height);
+		var clearColor:Color = Colors.BLACK;
 
 		while (!Rl.windowShouldClose()) {
 			// NOTE TO SELF: render textures are stupid
 			// and have to be casted to be used
 			// otherwise c++ compiler errors happen :3
 			var bullShit = cast(renderTex.texture, Texture2D);
-			bullShit.format = 1;
 
 			Rl.beginDrawing();
 
@@ -195,7 +195,6 @@ class Game {
 			// TODO: fix transparent sprites being tinted to
 			// the color of clear background shit
 
-			Rl.clearBackground(Colors.BLACK);
 			Rl.beginTextureMode(renderTex);
 			Rl.clearBackground(Colors.BLACK);
 
@@ -259,6 +258,50 @@ class Game {
 				Rl.Vector2.create(bullShit.width, bullShit.height),
 				Rl.Rectangle.create(0.0, 0.0, Rl.getScreenWidth(), Rl.getScreenHeight())
 			);
+
+			// Draw black bars on the window based on scale mode
+			switch(Game.scaleMode) {
+				case FIXED:
+					// left and right
+					if(destRect.x > 0) {
+						Rl.drawRectangle(
+							0,
+							0,
+							Std.int(destRect.x) + 1,
+							Rl.getScreenHeight(),
+							clearColor
+						);
+			
+						Rl.drawRectangle(
+							Std.int(destRect.x + destRect.width),
+							0,
+							Std.int(destRect.x),
+							Rl.getScreenHeight(),
+							clearColor
+						);
+					}
+
+					// top and bottom
+					if(destRect.y > 0) {
+						Rl.drawRectangle(
+							0,
+							0,
+							Rl.getScreenWidth(),
+							Std.int(destRect.y) + 1,
+							clearColor
+						);
+			
+						Rl.drawRectangle(
+							0,
+							Std.int(destRect.y + destRect.height),
+							Rl.getScreenWidth(),
+							Std.int(destRect.y),
+							clearColor
+						);
+					}
+
+				default: // nah
+			}
 
 			Rl.drawTexturePro(
 				bullShit,

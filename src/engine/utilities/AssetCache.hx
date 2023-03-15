@@ -1,5 +1,9 @@
 package engine.utilities;
 
+#if !macro
+import Rl.Texture2D;
+#end
+
 import engine.interfaces.IDestroyable;
 
 enum abstract AssetType(Int) to Int from Int {
@@ -23,8 +27,12 @@ class CachedAsset implements IDestroyable {
 
 	public function destroy() {
         switch(type) {
-            default: asset = null;
+            #if !macro
+            case IMAGE: Rl.unloadTexture(cast(asset, Texture2D));
+            #end
+            default:
         }
+        asset = null;
     }
 }
 
