@@ -223,7 +223,8 @@ class PlayState extends MusicBeatScene {
 
         call("onBeatHit", [curBeat]);
 
-        if (SONG.notes[Math.floor(curBeat / 4)].mustHitSection)
+        var section = SONG.notes[Math.floor(curBeat / 4)];
+        if (section != null && section.mustHitSection)
             camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556
         else
             camFollow.setPosition(100 + 429 / 2 + 150, 100 + 767 / 2 - 100); // 464.5, 385.5
