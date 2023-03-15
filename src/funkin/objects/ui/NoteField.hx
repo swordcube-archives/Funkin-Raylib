@@ -1,7 +1,7 @@
 package funkin.objects.ui;
 
 import scenes.PlayState;
-import engine.Group.TypedGroup;
+import engine.group.Group.TypedGroup;
 import engine.Game;
 import engine.math.AngleUtil;
 import engine.math.MathUtil;

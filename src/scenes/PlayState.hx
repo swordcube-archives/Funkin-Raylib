@@ -7,7 +7,7 @@ import engine.tweens.Ease;
 import engine.tweens.Tween;
 import funkin.objects.ui.Note;
 import funkin.objects.ui.Receptor;
-import engine.Group.TypedGroup;
+import engine.group.Group.TypedGroup;
 import scenes.MusicBeat.MusicBeatScene;
 import scenes.menus.*;
 import engine.sound.MusicEx;
@@ -54,8 +54,8 @@ class PlayState extends MusicBeatScene {
         Conductor.changeBPM(SONG.bpm);
         Conductor.position = Conductor.crochet * -5;
 
-        if(SONG.keyCount == null)
-            SONG.keyCount = 4;
+        if(SONG.keyCount == null) SONG.keyCount = 4;
+        if(SONG.stage == null) SONG.stage = "stage";
 
         scripts.push(new HScript(Paths.script('data/stages/${SONG.stage}')));
         scripts.push(new HScript(Paths.script("data/scripts/testing")));
@@ -221,7 +221,7 @@ class PlayState extends MusicBeatScene {
 
         if(startingSong || endingSong) return;
 
-        call("onBeatHit");
+        call("onBeatHit", [curBeat]);
 
         if (SONG.notes[Math.floor(curBeat / 4)].mustHitSection)
             camFollow.setPosition(770 + 411 / 2 - 100, 450 + 412 / 2 - 100); // 875.5, 556

@@ -1,12 +1,8 @@
 package engine.utilities;
 
-#if !macro
-import Rl.Color;
-#else
-typedef Color = Dynamic;
-#end
-
 class ColorUtil {
+	public static var COLOR_REGEX = ~/^(0x|#)(([A-F0-9]{2}){3,4})$/i;
+
 	/**
 	 * Get an interpolated color based on two different colors.
 	 *
@@ -26,5 +22,33 @@ class ColorUtil {
 		#else
 		return null;
 		#end
+	}
+
+	/**
+	 * Returns a new `Color` instance from a hex string.
+	 * 
+	 * The string can be formatted like so:
+	 * 
+	 * - `#FFFFFF`    -> `(255, 255, 255)`
+	 * - `0x6bfc03` -> `(107, 252, 3)`
+	 * 
+	 * @param hex The string to convert to a color.
+	 */
+	public static function fromHexString(hex:String) {
+		// Make sure the hex string is just formatted as something like
+		// "FFFFFF" or "6bfc03"
+		hex = hex.replace("#", "").replace("0x", "");
+
+		// Get the RGB values from the hex value
+		var r = Std.parseInt("0x" + hex.substr(0, 2));
+		var g = Std.parseInt("0x" + hex.substr(2, 2));
+		var b = Std.parseInt("0x" + hex.substr(4, 2));
+
+		// If any of the values are `null`, they get set to 0.
+		if(r == null) r = 0;
+		if(g == null) g = 0;
+		if(b == null) b = 0;
+
+		return Color.create(r, g, b, 255);
 	}
 }

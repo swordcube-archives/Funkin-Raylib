@@ -10,6 +10,15 @@ class Basic implements IBasic {
 	 */
 	public var alive:Bool = true;
 
+	@:noCompletion
+	private function get_alive():Bool {
+		return alive;
+	}
+	@:noCompletion
+	private function set_alive(v:Bool):Bool {
+		return alive = v;
+	}
+
 	public function new() {}
 
 	public function update(elapsed:Float) {}

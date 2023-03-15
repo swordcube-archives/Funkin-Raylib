@@ -3,7 +3,7 @@ package funkin.objects.ui;
 import engine.Game;
 import engine.Sprite;
 import scenes.PlayState;
-import engine.Group.TypedGroup;
+import engine.group.Group.TypedGroup;
 
 typedef DirectionData = {
     var directions:Array<String>;

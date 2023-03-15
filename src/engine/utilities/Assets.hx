@@ -1,5 +1,6 @@
 package engine.utilities;
 
+import Rl.Sound;
 import sys.io.File;
 import sys.FileSystem;
 import engine.utilities.AssetCache.CacheMap;
@@ -32,7 +33,7 @@ class Assets {
         return contents;
     }
 
-    public static inline function getSound(path:String) {
+    public static inline function getSound(path:String):Sound {
         return Rl.loadSound(path);
     }
 }

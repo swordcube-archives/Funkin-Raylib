@@ -1,20 +1,23 @@
 package engine;
 
+import engine.graphics.BlendMode;
+import engine.math.Point4D;
 import engine.math.MathUtil;
 import engine.utilities.DirectionFlags;
 import engine.utilities.AssetCache.CacheMap;
 import engine.utilities.Atlas;
 import engine.utilities.Axes;
-import engine.managers.AnimationController;
 import engine.graphics.FileShader;
 import engine.managers.AnimationController;
 import engine.math.Point2D;
+import engine.utilities.Colors;
+import engine.utilities.Color;
+
 #if !macro
 import Rl.Image;
-import Rl.Colors;
-import Rl.Color;
 import Rl.Texture2D;
 import Rl.Rectangle;
+#end
 
 class Sprite extends Object {
 	/**
@@ -23,11 +26,13 @@ class Sprite extends Object {
 	public var frames(default, set):Atlas;
 
 	private function set_frames(atlas:Atlas) {
+		#if !macro
 		texture = atlas.texture;
 		frameWidth = atlas.frames[0].width;
 		frameHeight = atlas.frames[0].height;
 		updateHitbox();
 		set_antialiasing(antialiasing);
+		#end
 
 		return frames = atlas;
 	}
@@ -41,7 +46,7 @@ class Sprite extends Object {
 	 * The texture used to draw this sprite.
      * Unused if `frames` isn't `null`.
 	 */
-	public var texture:Texture2D;
+	public var texture:#if !macro Texture2D #else Dynamic #end;
 
 	/**
 	* A custom shader for the sprite.
@@ -57,7 +62,25 @@ class Sprite extends Object {
 	/**
 	 * Tints the sprite to a color.
 	 */
-	public var color:Color = Colors.WHITE;
+	public var color(default, set):#if !macro Color = Colors.WHITE #else Dynamic = null #end;
+
+	@:noCompletion
+	private function set_color(v:#if !macro Color #else Dynamic #end) {
+		return color = v;
+	}
+
+	/**
+	 * Clipping rectangle for this sprite.
+	 * Changing the rect's properties directly doesn't have any effect,
+	 * reassign the property to update it (`sprite.clipRect = sprite.clipRect;`).
+	 * Set to `null` to discard graphic frame clipping.
+	 */
+	public var clipRect(default, set):Point4D = new Point4D();
+
+	@:noCompletion
+	private function set_clipRect(v:Point4D):Point4D {
+		return clipRect = v;
+	}
 
 	/**
 	 * The transparency of the sprite.
@@ -65,7 +88,12 @@ class Sprite extends Object {
      * 0 = Invisible
      * 1 = Fully Visible
 	 */
-	public var alpha:Float = 1;
+	public var alpha(default, set):Float = 1;
+
+	@:noCompletion
+	private function set_alpha(v:Float):Float {
+		return alpha = v;
+	}
 
 	/**
 	 * The origin at which the sprite should rotate at.
@@ -74,10 +102,17 @@ class Sprite extends Object {
 
 	/**
 	 * The position of the sprite's graphic relative to its hitbox. For example, `offset.x = 10;` will
-	 * show the graphic 10 pixels left of the hitbox. Likely needs to be adjusted after changing a sprite's
-	 * `width`, `height` or `scale`.
+	 * show the graphic 10 pixels right (left if `flipOffsets` is set to `true`) of the hitbox.
+	 * 
+	 * Likely needs to be adjusted after changing a sprite's `width`, `height` or `scale`.
 	 */
 	public var offset:Point2D = new Point2D(0, 0);
+
+	/**
+	 * Whether or not you want this sprite's offsets to act like `HaxeFlixel`,
+	 * where negative = right/down + positive = left/up
+	 */
+	public var flipOffsets:Bool = false;
 
 	/**
 	 * How much the sprite moves with the camera.
@@ -96,42 +131,55 @@ class Sprite extends Object {
 	public var frameHeight:Int = 0;
 
 	/**
-	 * The width of this object's hitbox. For sprites, use `offset` to control the hitbox position.
-	 */
-	public var width:Int = 0;
-
-	/**
-	 * The height of this object's hitbox. For sprites, use `offset` to control the hitbox position.
-	 */
-	public var height:Int = 0;
-
-	/**
 	 * Controls whether the object is smoothed when rotated, affects performance.
 	 */
 	public var antialiasing(default, set):Bool;
 
+	@:noCompletion
 	private function set_antialiasing(v:Bool) {
+		#if !macro
 		if (texture != null)
 			Rl.setTextureFilter(texture, (v) ? 1 : 0);
+		#end
 
 		return antialiasing = v;
 	}
+
+	/**
+	 * Blending modes, just like Photoshop or whatever, e.g. "multiply", "add", etc.
+	 */
+	public var blend:BlendMode = ALPHA;
 
     /**
 	 * Can be set to `LEFT`, `RIGHT`, `UP`, and `DOWN` to take advantage
 	 * of flipped sprites and/or just track player orientation more easily.
 	 */
-	public var facing:DirectionFlags = RIGHT;
+	public var facing(default, set):DirectionFlags = RIGHT;
+
+	@:noCompletion
+	private function set_facing(v:Int):Int {
+		return facing = v;
+	}
 
 	/**
 	 * Whether this sprite is flipped on the X axis.
 	 */
-    public var flipX:Bool = false;
+    public var flipX(default, set):Bool = false;
+
+	@:noCompletion
+	private function set_flipX(v:Bool):Bool {
+		return flipX = v;
+	}
 
      /**
       * Whether this sprite is flipped on the Y axis.
       */
-    public var flipY:Bool = false;
+    public var flipY(default, set):Bool = false;
+
+	@:noCompletion
+	private function set_flipY(v:Bool):Bool {
+		return flipY = v;
+	}
 
 	public static var defaultAntialiasing:Bool = true;
 
@@ -141,7 +189,8 @@ class Sprite extends Object {
 		this.antialiasing = defaultAntialiasing;
 	}
 
-	public function loadGraphicFromTexture(texture:Texture2D, ?width:Int = 0, ?height:Int = 0) {
+	public function loadGraphicFromTexture(texture:#if !macro Texture2D #else Dynamic #end, ?width:Int = 0, ?height:Int = 0) {
+		#if !macro
 		if (width > 0 && height > 0) {
 			var atlas = new Atlas();
 			atlas.texture = texture;
@@ -175,15 +224,21 @@ class Sprite extends Object {
 			updateHitbox();
 		}
 		set_antialiasing(antialiasing);
+		#end
 
 		return this;
 	}
 
-	public function loadGraphicFromImage(image:Image, ?width:Int = 0, ?height:Int = 0) {
+	public function loadGraphicFromImage(image:#if !macro Image #else Dynamic #end, ?width:Int = 0, ?height:Int = 0) {
+		#if !macro
 		return loadGraphicFromTexture(Rl.loadTextureFromImage(image), width, height);
+		#else
+		return this;
+		#end
 	}
 
-	public function loadGraphic(path:String, ?width:Int = 0, ?height:Int = 0) {
+	public function loadGraphic(path:String, width:Int = 0, height:Int = 0) {
+		#if !macro
 		var cacheMap:CacheMap = Game.assetCache.cachedAssets.get(IMAGE);
 		var texture:Texture2D = null;
 
@@ -194,6 +249,9 @@ class Sprite extends Object {
 			Game.assetCache.cache(IMAGE, path, texture);
 		}
 		return loadGraphicFromTexture(texture, width, height);
+		#else
+		return this;
+		#end
 	}
 
 	/**
@@ -224,7 +282,11 @@ class Sprite extends Object {
 	public function updateHitbox() {
 		width = Std.int(Math.abs(scale.x) * frameWidth);
 		height = Std.int(Math.abs(scale.y) * frameHeight);
-		offset.set(0.5 * (width - frameWidth), 0.5 * (height - frameHeight));
+		if(flipOffsets)
+			offset.set(-0.5 * (width - frameWidth), -0.5 * (height - frameHeight));
+		else 
+			offset.set(0.5 * (width - frameWidth), 0.5 * (height - frameHeight));
+
 		centerOrigin();
 	}
 
@@ -234,11 +296,17 @@ class Sprite extends Object {
 	 * @param   AdjustPosition   Adjusts the actual X and Y position just once to match the offset change.
 	 */
 	public function centerOffsets(AdjustPosition:Bool = false):Void {
-		offset.x = (frameWidth - width) * -0.5;
-		offset.y = (frameHeight - height) * -0.5;
+		offset.x = (frameWidth - width) * (flipOffsets ? 0.5 : -0.5);
+		offset.y = (frameHeight - height) * (flipOffsets ? 0.5 : -0.5);
+
 		if (AdjustPosition) {
-			x += offset.x;
-			y += offset.y;
+			if(flipOffsets) {
+				x += offset.x;
+				y += offset.y;
+			} else {
+				x -= offset.x;
+				y -= offset.y;
+			}
 		}
 	}
 
@@ -246,25 +314,12 @@ class Sprite extends Object {
 	 * Sets the sprite's origin to its center - useful after adjusting
 	 * `scale` to make sure rotations work as expected.
 	 */
-	public function centerOrigin() {
+	 public function centerOrigin() {
 		origin.set(width * 0.5, height * 0.5);
 	}
 
-	/**
-	 * Updates the sprite's hitbox (`width`, `height`, `offset`) according to the current `scale`.
-	 * Also calls `centerOrigin()`.
-	 */
-	public function screenCenter(?axes:Axes = XY) {
-		if (axes.x)
-			position.x = (Game.width - width) * 0.5;
-
-		if (axes.y)
-			position.y = (Game.height - height) * 0.5;
-
-		return this;
-	}
-
-	public function makeGraphic(width:Int, height:Int, ?color:Color) {
+	public function makeGraphic(width:Int, height:Int, color:#if !macro Color #else Dynamic #end = null) {
+		#if !macro
 		if (color == null)
 			color = Colors.WHITE;
 
@@ -272,6 +327,7 @@ class Sprite extends Object {
 		frameWidth = texture.width;
 		frameHeight = texture.height;
 		updateHitbox();
+		#end
 		return this;
 	}
 
@@ -296,11 +352,16 @@ class Sprite extends Object {
 	 * @param camera The camera to draw this sprite onto.
 	 */
 	public function drawOnCamera(camera:Camera) {
+		#if !macro
 		if(!(Game.cameras.list.contains(camera) || camera == Game.camera)) return;
 
 		camera.renderQueue.push(() -> {
-			@:privateAccess
-			Rl.beginMode2D(camera.__rlCamera);
+			if(!camera.isOnScreen(this)) return;
+
+			@:privateAccess {
+				Rl.beginBlendMode(blend);
+				Rl.beginMode2D(camera.__rlCamera);
+			}
 	
 			var ogAngle:Float = angle;
 			angle %= 360;
@@ -314,8 +375,8 @@ class Sprite extends Object {
 			if (shader != null) Rl.beginShaderMode(shader.actualShader);
 	
 			var correctedPos = Rl.Vector2.create(
-				(position.x + offset.x / camera.zoom - Game.width * 0.5) * camera.zoom + Game.width * 0.5,
-				(position.y + offset.y / camera.zoom - Game.height * 0.5) * camera.zoom + Game.height * 0.5
+				(position.x + (flipOffsets ? -offset.x : offset.x) / camera.zoom - Game.width * 0.5) * camera.zoom + Game.width * 0.5,
+				(position.y + (flipOffsets ? -offset.x : offset.y) / camera.zoom - Game.height * 0.5) * camera.zoom + Game.height * 0.5
 			);
 	
 			color.a = Std.int(alpha * 255);
@@ -377,8 +438,8 @@ class Sprite extends Object {
 							frameData.height * (scale.y < 0 ? -1 : 1)
 						), // the coordinates of x, y, width, and height FROM the image
 						Rl.Rectangle.create(
-							adjustedPos.x,
-							adjustedPos.y,
+							MathUtil.roundDecimal(adjustedPos.x, 2),
+							MathUtil.roundDecimal(adjustedPos.y, 2),
 							MathUtil.absInt(Std.int(frameData.width * Math.abs(scale.x))),
 							MathUtil.absInt(Std.int(frameData.height * Math.abs(scale.y)))
 						), // where we want to display it on screen + how big it should be
@@ -424,8 +485,10 @@ class Sprite extends Object {
 			if (flipY) scale.y *= -1;
 			if (shader != null) Rl.endShaderMode();
 	
+			Rl.endBlendMode();
 			Rl.endMode2D();
 		});
+		#end
 	}
 
 	override function destroy() {
@@ -440,4 +503,3 @@ class Sprite extends Object {
 		super.destroy();
 	}
 }
-#end

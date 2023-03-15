@@ -3,11 +3,11 @@ package engine.gui;
 import engine.math.MathUtil;
 import engine.math.Point2D;
 import engine.keyboard.Keys;
+import engine.utilities.Colors;
+import engine.utilities.Color;
 
 #if !macro
 import Rl.Font;
-import Rl.Color;
-import Rl.Colors;
 #end
 
 enum abstract VolumeStatus(Int) to Int from Int {

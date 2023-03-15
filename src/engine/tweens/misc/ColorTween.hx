@@ -5,10 +5,9 @@ import engine.utilities.ColorUtil;
 
 #if !macro
 import engine.Sprite;
-import Rl.Color;
-#else
-typedef Color = Dynamic;
 #end
+
+import engine.utilities.Color;
 
 /**
  * Tweens a color's red, green, and blue properties

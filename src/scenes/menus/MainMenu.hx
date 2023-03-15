@@ -1,8 +1,7 @@
 package scenes.menus;
 
-import engine.Group.TypedGroup;
+import engine.group.Group.TypedGroup;
 import scenes.MusicBeat.MusicBeatScene;
-import engine.keyboard.Keys;
 import engine.Sprite;
 import engine.Game;
 import engine.math.MathUtil;
@@ -79,9 +78,7 @@ class MainMenu extends MusicBeatScene {
         if(controls.ACCEPT) {
             switch(menuItems[curSelected]) {
                 case "freeplay":
-                    Game.timeScale = 1;
-                    PlayState.SONG = Song.loadChart("roses", "hard");
-                    Game.switchScene(new PlayState());
+                    Game.switchScene(new FreeplayMenu());
             }
         }
     }

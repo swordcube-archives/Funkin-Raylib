@@ -8,6 +8,8 @@ import engine.keyboard.KeyboardManager;
 import engine.keyboard.Keys;
 import engine.Scene;
 import engine.utilities.AssetCache;
+import engine.utilities.Colors;
+import engine.utilities.Color;
 import engine.math.Random;
 import engine.math.MathUtil;
 import engine.managers.*;
@@ -16,7 +18,6 @@ import engine.managers.*;
 import Rl.Texture2D;
 import Rl.Font;
 import Rl.RenderTexture2D;
-import Rl.Colors;
 #end
 
 enum abstract ScaleMode(Int) to Int from Int {

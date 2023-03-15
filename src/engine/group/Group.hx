@@ -1,5 +1,6 @@
-package engine;
+package engine.group;
 
+import engine.group.SpriteGroup.TypedSpriteGroup;
 import engine.Object;
 import engine.utilities.Logs;
 import engine.utilities.DestroyUtil;
@@ -428,29 +429,104 @@ class TypedGroup<T:Object> extends Object {
 		return object;
 	}
 
-	public function forEach(callback:T->Void) {
+	/**
+	 * Applies a function to all members.
+	 *
+	 * @param   callback   A function that modifies one element at a time.
+	 * @param   recurse    Whether or not to apply the function to members of subgroups as well.
+	 */
+	public function forEach(callback:T->Void, recurse:Bool = false) {
 		for (member in members) {
-			if (member == null) continue;
+			if (member == null)
+				continue;
+
+			var group = resolveGroup(member);
+			if (recurse && group != null)
+				group.forEach(cast callback, recurse);
+
 			callback(member);
 		}
 	}
 
-	public function forEachAlive(callback:T->Void) {
+	/**
+	 * Applies a function to all `alive` members.
+	 *
+	 * @param   callback   A function that modifies one element at a time.
+	 * @param   recurse    Whether or not to apply the function to members of subgroups as well.
+	 */
+	public function forEachAlive(callback:T->Void, recurse:Bool = false) {
 		for (member in members) {
-			if (member != null && member.alive)
+			if (member != null && member.alive) {
+				var group = resolveGroup(member);
+
+				if (recurse && group != null)
+					group.forEachAlive(cast callback, recurse);
+
 				callback(member);
-			else
+			} else
 				continue;
 		}
 	}
 
-	public function forEachDead(callback:T->Void) {
+	/**
+	 * Applies a function to all dead members.
+	 *
+	 * @param   callback   A function that modifies one element at a time.
+	 * @param   recurse    Whether or not to apply the function to members of subgroups as well.
+	 */
+	public function forEachDead(callback:T->Void, recurse:Bool = false) {
 		for (member in members) {
-			if (member != null && !member.alive)
+			if (member != null && !member.alive) {
+				var group = resolveGroup(member);
+
+				if (recurse && group != null)
+					group.forEachDead(cast callback, recurse);
+
 				callback(member);
-			else
+			} else
 				continue;
 		}
+	}
+
+	/**
+	 * Applies a function to all members of type `Class<K>`.
+	 *
+	 * @param   ObjectClass   A class that objects will be checked against before Function is applied, ex: `Sprite`.
+	 * @param   Function      A function that modifies one element at a time.
+	 * @param   Recurse       Whether or not to apply the function to members of subgroups as well.
+	 */
+	public function forEachOfType<K>(ObjectClass:Class<K>, Function:K->Void, Recurse:Bool = false) {
+		var i:Int = 0;
+		var basic:Basic = null;
+
+		while (i < length) {
+			basic = members[i++];
+
+			if (basic != null) {
+				if (Recurse) {
+					var group = resolveGroup(basic);
+					if (group != null)
+						group.forEachOfType(ObjectClass, cast Function, Recurse);
+				}
+
+				if (isOfType(basic, ObjectClass))
+					Function(cast basic);
+			}
+		}
+	}
+
+	@:noCompletion
+	static function resolveGroup(ObjectOrGroup:Basic):TypedGroup<Object> {
+		var group:TypedGroup<Object> = null;
+		if (ObjectOrGroup != null) {
+			if (ObjectOrGroup is TypedGroup) {
+				group = cast ObjectOrGroup;
+			} else if (ObjectOrGroup is TypedSpriteGroup) {
+				var spriteGroup:TypedSpriteGroup<Dynamic> = cast ObjectOrGroup;
+				group = cast spriteGroup.group;
+			}
+		}
+		return group;
 	}
 
 	/**
@@ -462,7 +538,8 @@ class TypedGroup<T:Object> extends Object {
 		DestroyUtil.destroy(memberRemoved);
 
 		for (member in members) {
-			if (member == null) continue;
+			if (member == null)
+				continue;
 			member.destroy();
 		}
 
@@ -486,8 +563,8 @@ class TypedGroup<T:Object> extends Object {
 }
 
 /**
- * `FlxTypedGroupIterator` ported to this shitty raylib engine.
- * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/group/FlxGroup.hx#L922
+ * `TypedGroupIterator` ported to this shitty raylib engine.
+ * @see https://github.com/HaxeFlixel/flixel/blob/master/flixel/group/Group.hx#L922
  */
 class TypedGroupIterator<T> {
 	var _groupMembers:Array<T>;

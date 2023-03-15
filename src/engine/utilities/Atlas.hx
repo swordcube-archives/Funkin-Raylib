@@ -24,6 +24,16 @@ class Atlas {
     public var texture:Texture2D;
     public var frames:Array<FrameData> = [];
 
+    /**
+     * The amount of frames in this atlas.
+     */
+    public var numFrames(get, never):Int;
+
+    @:noCompletion
+    private function get_numFrames():Int {
+        return frames.length;
+    }
+
     public function new() {}
 
     //** Helper Functions **//

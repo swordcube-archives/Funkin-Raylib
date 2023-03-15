@@ -1,17 +1,14 @@
 package engine.utilities;
 
-#if !macro
-import Rl.Texture2D;
-#end
-
 import engine.interfaces.IDestroyable;
 
 enum abstract AssetType(Int) to Int from Int {
     var IMAGE = 0;
-    var TEXT = 1;
-    var XML = 2;
-    var JSON = 3;
-    var ATLAS = 4;
+    var SOUND = 1;
+    var TEXT = 2;
+    var XML = 3;
+    var JSON = 4;
+    var ATLAS = 5;
 }
 
 typedef CacheMap = Map<String, CachedAsset>;
@@ -28,7 +25,8 @@ class CachedAsset implements IDestroyable {
 	public function destroy() {
         switch(type) {
             #if !macro
-            case IMAGE: Rl.unloadTexture(cast(asset, Texture2D));
+            case IMAGE: Rl.unloadTexture(cast(asset, Rl.Texture2D));
+            case SOUND: Rl.unloadSound(cast asset);
             #end
             default:
         }
@@ -43,6 +41,7 @@ class AssetCache {
 
     public var cachedAssets:Map<AssetType, CacheMap> = [
         IMAGE => [],
+        SOUND => [],
         TEXT  => [],
         XML   => [],
         JSON  => [],

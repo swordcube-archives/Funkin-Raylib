@@ -5,7 +5,6 @@ import engine.Sprite;
 import Rl.Rectangle;
 import Rl.Vector2;
 #else
-typedef Sprite = Dynamic;
 typedef Rectangle = Dynamic;
 typedef Vector2 = Dynamic;
 #end

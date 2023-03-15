@@ -1,0 +1,153 @@
+{
+    "globalDifficulties": ["easy", "normal", "hard"],
+
+    "list": [
+        "Tutorial Week",
+        {
+            "song": "Tutorial",
+            "displayName": null,
+            "character": "gf",
+            "color": "#9271FD"
+        },
+
+        "Week 1",
+        {
+            "song": "Bopeebo",
+            "displayName": null,
+            "character": "dad",
+            "color": "#9271FD"
+        },
+        {
+            "song": "Fresh",
+            "displayName": null,
+            "character": "dad",
+            "color": "#9271FD"
+        },
+        {
+            "song": "Dad Battle",
+            "displayName": null,
+            "character": "dad",
+            "color": "#9271FD"
+        },
+
+        "Week 2",
+        {
+            "song": "Spookeez",
+            "displayName": null,
+            "character": "spooky",
+            "color": "#223344"
+        },
+        {
+            "song": "South",
+            "displayName": null,
+            "character": "spooky",
+            "color": "#223344"
+        },
+        {
+            "song": "Monster",
+            "displayName": null,
+            "character": "monster",
+            "color": "#223344"
+        },
+
+        "Week 3",
+        {
+            "song": "Pico",
+            "displayName": null,
+            "character": "pico",
+            "color": "#941653"
+        },
+        {
+            "song": "Philly Nice",
+            "displayName": null,
+            "character": "pico",
+            "color": "#941653"
+        },
+        {
+            "song": "Blammed",
+            "displayName": null,
+            "character": "pico",
+            "color": "#941653"
+        },
+
+        "Week 4",
+        {
+            "song": "Satin Panties",
+            "displayName": null,
+            "character": "mom",
+            "color": "#FC96D7"
+        },
+        {
+            "song": "High",
+            "displayName": null,
+            "character": "mom",
+            "color": "#FC96D7"
+        },
+        {
+            "song": "M.I.L.F",
+            "displayName": null,
+            "character": "mom",
+            "color": "#FC96D7"
+        },
+
+        "Week 5",
+        {
+            "song": "Cocoa",
+            "displayName": null,
+            "character": "parents-christmas",
+            "color": "#A0D1FF"
+        },
+        {
+            "song": "Eggnog",
+            "displayName": null,
+            "character": "parents-christmas",
+            "color": "#A0D1FF"
+        },
+        {
+            "song": "Winter Horrorland",
+            "displayName": null,
+            "character": "monster",
+            "color": "#A0D1FF"
+        },
+
+        "Week 6",
+        {
+            "song": "Senpai",
+            "displayName": null,
+            "character": "senpai",
+            "color": "#FF78BF"
+        },
+        {
+            "song": "Roses",
+            "displayName": null,
+            "character": "senpai-angry",
+            "color": "#FF78BF"
+        },
+        {
+            "song": "Thorns",
+            "displayName": null,
+            "character": "spirit",
+            "color": "#FF78BF"
+        },
+
+        "Week 7",
+        {
+            "song": "Ugh",
+            "displayName": null,
+            "character": "tankman",
+            "color": "#F6B604"
+        },
+        {
+            "song": "Guns",
+            "displayName": null,
+            "character": "tankman",
+            "color": "#F6B604"
+        },
+        {
+            "song": "Stress",
+            "displayName": null,
+            "character": "tankman",
+            "color": "#F6B604"
+        }
+    ]
+}

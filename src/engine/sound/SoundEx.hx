@@ -77,6 +77,12 @@ class SoundEx extends Object implements ISound {
         super.update(elapsed);
         if(!audioLoaded) return;
 
+        if(!Rl.isSoundPlaying(__sound) && !loop && playing) {
+            Game.sound.list.remove(this);
+            stop();
+            destroy();
+        }
+
         if(!Rl.isSoundPlaying(__sound) && loop && playing)
             Rl.playSound(__sound);
     }

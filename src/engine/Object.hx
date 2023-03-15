@@ -1,5 +1,6 @@
 package engine;
 
+import engine.utilities.Axes;
 import engine.math.Point2D;
 import engine.math.VelocityUtil;
 
@@ -50,16 +51,78 @@ class Object extends Basic {
 	 */
 	public var immovable:Bool = false;
 
+	@:noCompletion
+	private function get_immovable():Bool {
+		return immovable;
+	}
+
+	@:noCompletion
+	private function set_immovable(v:Bool):Bool {
+		return immovable = v;
+	}
+
 	/**
 	 * Whether or not this object gets affected by velocity.
 	 * Set this to `false` for a small performance boost.
 	 */
 	public var moves:Bool = true;
 
+	@:noCompletion
+	private function get_moves():Bool {
+		return moves;
+	}
+
+	@:noCompletion
+	private function set_moves(v:Bool):Bool {
+		return moves = v;
+	}
+
 	/**
 	 * Whether or not this object can draw to the screen.
 	 */
 	public var visible:Bool = true;
+
+	@:noCompletion
+	private function get_visible():Bool {
+		return visible;
+	}
+
+	@:noCompletion
+	private function set_visible(v:Bool):Bool {
+		return visible = v;
+	}
+
+	/**
+	 * The width of this object's hitbox. For sprites, use `offset` to control the hitbox position.
+	 */
+	@:isVar
+	public var width(get, set):Int = 0;
+
+	@:noCompletion
+	private function get_width():Int {
+		return width;
+	}
+
+	@:noCompletion
+	private function set_width(v:Int):Int {
+		return width = v;
+	}
+
+	/**
+	 * The height of this object's hitbox. For sprites, use `offset` to control the hitbox position.
+	 */
+	@:isVar
+	public var height(get, set):Int = 0;
+
+	@:noCompletion
+	private function get_height():Int {
+		return height;
+	}
+
+	@:noCompletion
+	private function set_height(v:Int):Int {
+		return height = v;
+	}
 
 	/**
 	 * The X and Y position of the object.
@@ -110,10 +173,15 @@ class Object extends Basic {
 	public var maxAngular:Float = 10000;
 
 	/**
+	 * Handy for storing health percentage or armor points or whatever.
+	 */
+	public var health:Float = 1;
+
+	/**
 	 * The X position of the object.
 	 * Shortcut to `position.x`.
 	 */
-	public var x(get, set):Float;
+	@:isVar public var x(get, set):Float;
 
 	@:noCompletion
 	private function get_x():Float {
@@ -129,7 +197,7 @@ class Object extends Basic {
 	 * The Y position of the object.
 	 * Shortcut to `position.y`.
 	 */
-	public var y(get, set):Float;
+	@:isVar public var y(get, set):Float;
 
 	@:noCompletion
 	private function get_y():Float {
@@ -146,19 +214,59 @@ class Object extends Basic {
 	 * @param x The X position to use.
 	 * @param y The Y position to use.
 	 */
-	public function setPosition(?x:Float = 0, ?y:Float = 0) {
+	public function setPosition(x:Float = 0, y:Float = 0) {
 		position.set(x, y);
 	}
 
-	public function new(?x:Float = 0, ?y:Float = 0) {
+	/**
+	 * Reduces the `health` variable of this object by the amount specified in `Damage`.
+	 * Calls `kill()` if health drops to or below zero.
+	 *
+	 * @param   Damage   How much health to take away (use a negative number to give a health bonus).
+	 */
+	public function hurt(damage:Float):Void {
+		health = health - damage;
+		if (health <= 0)
+			kill();
+	}
+
+	/**
+	 * Centers this `Object` on the screen, either by the x axis, y axis, or both.
+	 *
+	 * @param   axes   On what axes to center the object (e.g. `X`, `Y`, `XY`) - default is both. 
+	 * @return  This Object for chaining
+	 */
+	public function screenCenter(?axes:Axes = XY) {
+		if (axes.x)
+			position.x = (Game.width - width) * 0.5;
+
+		if (axes.y)
+			position.y = (Game.height - height) * 0.5;
+
+		return this;
+	}
+
+	public function new(x:Float = 0, y:Float = 0, width:Int = 0, height:Int = 0) {
 		super();
 		position.set(x, y);
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
 	 * How much the object should rotate when shown on screen. (in degrees)
 	 */
 	public var angle:Float = 0;
+
+	@:noCompletion
+	private function get_angle():Float {
+		return angle;
+	}
+
+	@:noCompletion
+	private function set_angle(v:Float):Float {
+		return angle = v;
+	}
 
 	override function update(elapsed:Float) {
 		updateMotion(elapsed);
@@ -171,7 +279,8 @@ class Object extends Basic {
 	 */
 	@:noCompletion
 	function updateMotion(elapsed:Float):Void {
-		if(position == null || !moves) return;
+		if (position == null || !moves)
+			return;
 
 		var velocityDelta = 0.5 * (VelocityUtil.computeVelocity(angularVelocity, angularAcceleration, angularDrag, maxAngular, elapsed) - angularVelocity);
 		angularVelocity += velocityDelta;

@@ -19,11 +19,7 @@ import engine.tweens.motion.QuadPath;
 import engine.utilities.ArrayUtil;
 import engine.interfaces.IDestroyable;
 
-#if !macro
-import Rl.Color;
-#else
-typedef Color = Dynamic;
-#end
+import engine.utilities.Color;
 
 /**
  * `TweenType` but ported to this shitty raylib engine.

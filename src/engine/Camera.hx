@@ -87,6 +87,17 @@ class Camera extends Object {
         #end
     }
 
+    /**
+     * Returns if a sprite is on screen.
+     * @param sprite The sprite to check.
+     */
+    public function isOnScreen(sprite:Sprite) {
+        return !((sprite.x < (-Math.abs((sprite.frameWidth * sprite.scale.x) * 1.2) / camera.zoom)) ||
+            (sprite.y < (-Math.abs((sprite.frameHeight * sprite.scale.y) * 1.2) / camera.zoom)) ||
+            (sprite.x > ((Game.width + Math.abs((sprite.frameWidth * sprite.scale.x) * 1.2)) / camera.zoom)) ||
+            (sprite.y > ((Game.height + Math.abs((sprite.frameHeight * sprite.scale.y) * 1.2)) / camera.zoom)));
+    }
+
     override function update(elapsed:Float) {
         // no super because that only calculates velocity shit
         // which we don't need for a fucking camera

@@ -1,5 +1,6 @@
 package engine;
 
+import engine.utilities.Color;
 import engine.utilities.Timer;
 import engine.tweens.Ease;
 import engine.tweens.Tween;

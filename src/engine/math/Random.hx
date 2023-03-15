@@ -1,10 +1,6 @@
 package engine.math;
 
-#if !macro
-import Rl.Color;
-#else
-typedef Color = Dynamic;
-#end
+import engine.utilities.Color;
 
 /**
  * A class containing a set of functions for random generation. Should be accessed via `Game.random`.

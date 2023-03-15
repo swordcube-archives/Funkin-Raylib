@@ -1,5 +1,7 @@
 package engine;
 
+import engine.group.Group;
+
 class Scene extends Group {
 	/**
 	 * Determines whether or not this scene is updated even when it is not the active scene.
