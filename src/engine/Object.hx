@@ -10,43 +10,6 @@ import engine.math.VelocityUtil;
  */
 class Object extends Basic {
 	/**
-	 * The first camera this object can draw to.
-	 */
-	public var camera(get, set):Camera;
-
-	/**
-	 * The list of every camera this object can draw to.
-	 */
-	public var cameras(get, set):Array<Camera>;
-
-	private var _camera:Camera;
-	private var _cameras:Array<Camera>;
-
-	@:noCompletion
-	function get_camera():Camera {
-		return (_cameras == null || _cameras.length == 0) ? Camera.defaultCameras[0] : _cameras[0];
-	}
-
-	@:noCompletion
-	function set_camera(Value:Camera):Camera {
-		if (_cameras == null)
-			_cameras = [Value];
-		else
-			_cameras[0] = Value;
-		return Value;
-	}
-
-	@:noCompletion
-	function get_cameras():Array<Camera> {
-		return (_cameras == null) ? Camera.defaultCameras : _cameras;
-	}
-
-	@:noCompletion
-	function set_cameras(Value:Array<Camera>):Array<Camera> {
-		return _cameras = Value;
-	}
-
-	/**
 	 * Whether or not this object is movable.
 	 */
 	public var immovable:Bool = false;
@@ -75,21 +38,6 @@ class Object extends Basic {
 	@:noCompletion
 	private function set_moves(v:Bool):Bool {
 		return moves = v;
-	}
-
-	/**
-	 * Whether or not this object can draw to the screen.
-	 */
-	public var visible:Bool = true;
-
-	@:noCompletion
-	private function get_visible():Bool {
-		return visible;
-	}
-
-	@:noCompletion
-	private function set_visible(v:Bool):Bool {
-		return visible = v;
 	}
 
 	/**

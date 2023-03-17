@@ -168,12 +168,15 @@ class Game {
 		Game.switchScene(Type.createInstance(Type.getClass(scene), []));
 	}
 
+	static var renderTex:RenderTexture2D;
+
 	public function start() {
 		Game.volumeTray = new VolumeTray();
 
 		var fpsFont:Font = Rl.loadFont(Paths.font("vcr.ttf"));
-		var renderTex:RenderTexture2D = Rl.loadRenderTexture(Game.width, Game.height);
 		var clearColor:Color = Colors.BLACK;
+
+		renderTex = Rl.loadRenderTexture(Game.width, Game.height);
 
 		while (!Rl.windowShouldClose()) {
 			// NOTE TO SELF: render textures are stupid

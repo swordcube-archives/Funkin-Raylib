@@ -6,7 +6,7 @@ interface IBasic extends IDestroyable {
 	/**
 	 * Whether or not this object is alive.
 	 */
-	public var alive:Bool;
+	public var alive(default, set):Bool;
 
 	public function update(elapsed:Float):Void;
 	public function draw():Void;

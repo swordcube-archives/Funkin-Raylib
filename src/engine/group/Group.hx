@@ -1,16 +1,16 @@
 package engine.group;
 
+import engine.Basic;
 import engine.group.SpriteGroup.TypedSpriteGroup;
-import engine.Object;
 import engine.utilities.Logs;
 import engine.utilities.DestroyUtil;
 import engine.utilities.Signal.TypedSignal;
 import engine.utilities.Sort;
 import Std.isOfType;
 
-typedef Group = TypedGroup<Object>;
+typedef Group = TypedGroup<Basic>;
 
-class TypedGroup<T:Object> extends Object {
+class TypedGroup<T:Basic> extends Basic {
 	public var maxSize:Int = 0;
 
 	/**
@@ -58,7 +58,7 @@ class TypedGroup<T:Object> extends Object {
 
 	override function draw() {
 		var i:Int = 0;
-		var basic:Object = null;
+		var basic:Basic = null;
 
 		var oldDefaultCameras = Camera.defaultCameras;
 		if (cameras != null)

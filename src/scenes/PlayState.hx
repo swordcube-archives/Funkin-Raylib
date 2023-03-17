@@ -1,5 +1,6 @@
 package scenes;
 
+import engine.gui.ProgressBar;
 import funkin.backend.hscript.HScript;
 import engine.keyboard.Keys;
 import funkin.objects.ui.NoteField;
@@ -36,11 +37,14 @@ class PlayState extends MusicBeatScene {
     public var notes:NoteField;
 
     public var camHUD:Camera;
-    var camFollow:Object;
+    public var camFollow:Object;
 
     public var unspawnNotes:Array<Note> = [];
     public var scrollSpeed:Float = 2.7;
     public var defaultCamZoom:Float = 0.9;
+
+    public var health:Float = 1;
+    public var maxHealth:Float = 2;
 
     public var scripts:Array<HScript> = [];
 
