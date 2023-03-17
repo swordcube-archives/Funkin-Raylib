@@ -1,5 +1,6 @@
 # Funkin-Raylib
 A port of Friday Night Funkin' to Raylib
+
 Includes a framework called `Droplet` made specifically for the project (as of now).
 
 This is not finished and WILL have bugs! If you find any,
